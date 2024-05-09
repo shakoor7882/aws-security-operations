@@ -1,17 +1,19 @@
+### AWS ###
 variable "aws_region" {
   type    = string
   default = "us-east-2"
 }
 
-variable "primary_availability_zone" {
-  type    = string
-  default = "us-east-2a"
-}
-
-variable "create_rds" {
+### GuardDuty ###
+variable "enable_guardduty" {
   type = bool
 }
 
+variable "enable_guardduty_runtime_monitoring" {
+  type = bool
+}
+
+### EC2 ###
 variable "ami" {
   type = string
 }
@@ -21,5 +23,10 @@ variable "instance_type" {
 }
 
 variable "user_data" {
+  type = string
+}
+
+### SNS ###
+variable "sns_email" {
   type = string
 }

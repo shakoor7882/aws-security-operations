@@ -15,7 +15,6 @@ resource "aws_instance" "main" {
   subnet_id                   = var.subnet
   vpc_security_group_ids      = [aws_security_group.main.id]
 
-  availability_zone    = var.az
   iam_instance_profile = aws_iam_instance_profile.main.id
   user_data            = file("${path.module}/userdata/${var.user_data}")
 
@@ -28,7 +27,7 @@ resource "aws_instance" "main" {
   ebs_optimized = true
 
   root_block_device {
-    encrypted  = true
+    encrypted = true
     # kms_key_id = aws_kms_key.main.arn
   }
 

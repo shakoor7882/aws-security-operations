@@ -1,5 +1,9 @@
 # aws-security-operations
 
+add email
+
+confirm
+
 
 ```sh
 aws ssm start-session --target i-00000000000000000
@@ -14,3 +18,15 @@ dnf check-update
 dnf update
 dnf upgrade
 ```
+
+
+
+```sh
+dig guarddutyc2activityb.com
+dig GuardDutyC2ActivityB.com any
+```
+
+
+
+https://www.youtube.com/watch?v=fpShCxD8kFA
+https://github.com/awslabs/amazon-guardduty-tester

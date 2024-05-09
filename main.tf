@@ -21,9 +21,24 @@ resource "aws_guardduty_detector_feature" "runtime_monitoring" {
   status      = "ENABLED"
 
   additional_configuration {
+    name   = "EKS_ADDON_MANAGEMENT"
+    status = "DISABLED"
+  }
+
+  additional_configuration {
+    name   = "ECS_FARGATE_AGENT_MANAGEMENT"
+    status = "DISABLED"
+  }
+
+  additional_configuration {
     name   = "EC2_AGENT_MANAGEMENT"
     status = "ENABLED"
   }
+}
+
+module "sns" {
+  source = "./modules/sns"
+  email  = var.sns_email
 }
 
 module "vpc" {
@@ -34,7 +49,6 @@ module "vpc" {
 module "instance" {
   source        = "./modules/ec2"
   vpc_id        = module.vpc.vpc_id
-  az            = var.primary_availability_zone
   subnet        = module.vpc.subnets[0]
   ami           = var.ami
   instance_type = var.instance_type

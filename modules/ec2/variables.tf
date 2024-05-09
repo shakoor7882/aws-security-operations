@@ -6,10 +6,6 @@ variable "subnet" {
   type = string
 }
 
-variable "az" {
-  type = string
-}
-
 variable "ami" {
   type = string
 }
