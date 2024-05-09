@@ -17,3 +17,7 @@ output "private_workload_subnet_id" {
 output "vpce_workload_subnet_id" {
   value = aws_subnet.vpce.id
 }
+
+output "secops_subnet_id" {
+  value = aws_subnet.secops.id
+}
