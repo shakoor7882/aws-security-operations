@@ -11,6 +11,8 @@ locals {
     "ec2messages",
     "ec2",
     "ssmmessages",
+    "logs",
+    "ssm-incidents"
   ]
   subnet_ids         = [var.subnet_id]
   security_group_ids = [aws_security_group.session_manager.id]

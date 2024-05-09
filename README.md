@@ -6,6 +6,9 @@ confirm
 
 isolate the instance
 
+cloud-init status
+systemctl status amazon-cloudwatch-agent
+
 ```sh
 aws ssm start-session --target i-00000000000000000
 ```
@@ -41,3 +44,11 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tr
 Closing untracked connections:
 
 https://dev.to/aws-builders/aws-incident-response-how-to-contain-an-ec2-instance-pjk
+
+
+
+
+
+
+
+https://github.com/epomatti/aws-cloudwatch-subscriptions

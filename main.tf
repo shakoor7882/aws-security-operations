@@ -22,6 +22,10 @@ module "vpc" {
   workload = local.workload
 }
 
+module "ssm" {
+  source = "./modules/workload/ssm"
+}
+
 module "instance" {
   source        = "./modules/workload/ec2"
   vpc_id        = module.vpc.vpc_id
@@ -29,6 +33,8 @@ module "instance" {
   ami           = var.ami
   instance_type = var.instance_type
   user_data     = var.user_data
+
+  depends_on = [module.ssm, module.vpce_workload]
 }
 
 module "vpce_workload" {

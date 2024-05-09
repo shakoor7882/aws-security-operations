@@ -22,7 +22,7 @@ resource "aws_instance" "main" {
   ami           = var.ami
   instance_type = var.instance_type
 
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   subnet_id                   = var.subnet
   vpc_security_group_ids      = [aws_security_group.main.id]
 
@@ -44,7 +44,6 @@ resource "aws_instance" "main" {
   lifecycle {
     ignore_changes = [
       ami,
-      associate_public_ip_address,
       user_data
     ]
   }
@@ -74,13 +73,19 @@ resource "aws_iam_role" "main" {
   })
 }
 
-data "aws_iam_policy" "AmazonSSMManagedInstanceCore" {
-  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
+  role       = aws_iam_role.main.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "ssm_core" {
+resource "aws_iam_role_policy_attachment" "AmazonSSMReadOnlyAccess" {
   role       = aws_iam_role.main.name
-  policy_arn = data.aws_iam_policy.AmazonSSMManagedInstanceCore.arn
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "CloudWatchAgentServerPolicy" {
+  role       = aws_iam_role.main.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
 resource "aws_security_group" "main" {
