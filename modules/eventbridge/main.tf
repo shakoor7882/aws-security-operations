@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "guardduty" {
   name        = "capture-guardduty-findings"
-  description = "Capture each GuardDuty findings"
+  description = "Capture each GuardDuty finding."
 
   event_pattern = jsonencode({
     "source" : ["aws.guardduty"],

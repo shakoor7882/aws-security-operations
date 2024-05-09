@@ -11,29 +11,14 @@ provider "aws" {
   region = var.aws_region
 }
 
-resource "aws_guardduty_detector" "main" {
-  enable = true
+locals {
+  workload = "bigbank"
 }
 
-resource "aws_guardduty_detector_feature" "runtime_monitoring" {
-  detector_id = aws_guardduty_detector.main.id
-  name        = "RUNTIME_MONITORING"
-  status      = "ENABLED"
-
-  additional_configuration {
-    name   = "EKS_ADDON_MANAGEMENT"
-    status = "DISABLED"
-  }
-
-  additional_configuration {
-    name   = "ECS_FARGATE_AGENT_MANAGEMENT"
-    status = "DISABLED"
-  }
-
-  additional_configuration {
-    name   = "EC2_AGENT_MANAGEMENT"
-    status = "ENABLED"
-  }
+module "guardduty" {
+  source                    = "./modules/guardduty"
+  enable_guardduty          = var.enable_guardduty
+  enable_runtime_monitoring = var.enable_guardduty_runtime_monitoring
 }
 
 module "sns" {
@@ -49,6 +34,12 @@ module "eventbridge" {
 module "vpc" {
   source = "./modules/vpc"
   region = var.aws_region
+}
+
+module "flowlogs" {
+  source   = "./modules/flowlogs"
+  workload = local.workload
+  vpc_id   = module.vpc.vpc_id
 }
 
 module "instance" {
