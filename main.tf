@@ -15,47 +15,57 @@ locals {
   workload = "bigbank"
 }
 
-module "guardduty" {
-  source                    = "./modules/guardduty"
-  enable_guardduty          = var.enable_guardduty
-  enable_runtime_monitoring = var.enable_guardduty_runtime_monitoring
-}
-
-module "sns" {
-  source = "./modules/sns"
-  email  = var.sns_email
-}
-
-module "eventbridge" {
-  source        = "./modules/eventbridge"
-  sns_topic_arn = module.sns.arn
-}
-
+### Workload ###
 module "vpc" {
-  source = "./modules/vpc"
-  region = var.aws_region
-}
-
-module "flowlogs" {
-  source   = "./modules/flowlogs"
+  source   = "./modules/workload/vpc"
+  region   = var.aws_region
   workload = local.workload
-  vpc_id   = module.vpc.vpc_id
 }
 
 module "instance" {
-  source        = "./modules/ec2"
+  source        = "./modules/workload/ec2"
   vpc_id        = module.vpc.vpc_id
-  subnet        = module.vpc.subnets[0]
+  subnet        = module.vpc.private_workload_subnet_id
   ami           = var.ami
   instance_type = var.instance_type
   user_data     = var.user_data
-
-  depends_on = [module.vpce]
 }
 
-module "vpce" {
-  source    = "./modules/vpce"
+module "vpce_workload" {
+  source    = "./modules/workload/vpce"
+  workload  = local.workload
   region    = var.aws_region
   vpc_id    = module.vpc.vpc_id
-  subnet_id = module.vpc.subnets[0]
+  subnet_id = module.vpc.vpce_workload_subnet_id
 }
+
+### Security ###
+
+# module "guardduty" {
+#   source                    = "./modules/security/guardduty"
+#   enable_guardduty          = var.enable_guardduty
+#   enable_runtime_monitoring = var.enable_guardduty_runtime_monitoring
+# }
+
+# module "vpce_security" {
+#   source    = "./modules/security/vpce"
+#   region    = var.aws_region
+#   vpc_id    = module.vpc.vpc_id
+#   subnet_id = module.vpc.vpce_workload_subnet_id
+# }
+
+# module "sns" {
+#   source = "./modules/security/sns"
+#   email  = var.sns_email
+# }
+
+# module "eventbridge" {
+#   source        = "./modules/security/eventbridge"
+#   sns_topic_arn = module.sns.arn
+# }
+
+# module "flowlogs" {
+#   source   = "./modules/security/flowlogs"
+#   workload = local.workload
+#   vpc_id   = module.vpc.vpc_id
+# }
