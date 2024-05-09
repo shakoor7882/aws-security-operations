@@ -26,7 +26,8 @@ dig guarddutyc2activityb.com
 dig GuardDutyC2ActivityB.com any
 ```
 
-
+TODO: Add detective
+TODO: Add Security Lake
 
 https://www.youtube.com/watch?v=fpShCxD8kFA
 https://github.com/awslabs/amazon-guardduty-tester

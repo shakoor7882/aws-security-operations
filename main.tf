@@ -41,6 +41,11 @@ module "sns" {
   email  = var.sns_email
 }
 
+module "eventbridge" {
+  source        = "./modules/eventbridge"
+  sns_topic_arn = module.sns.arn
+}
+
 module "vpc" {
   source = "./modules/vpc"
   region = var.aws_region
