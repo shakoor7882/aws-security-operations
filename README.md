@@ -52,7 +52,15 @@ Getting the private key from Parameter Store:
 ```sh
 aws ssm get-parameter \
     --name "bigbank-private-key-openssh" \
-    --with-decryption
+    --with-decryption \
+    --query 'Parameter.Value' \
+    --output text > rsa_private_key
+```
+
+Connect to SSH:
+
+```sh
+ssh -i ./rsa_private_key ec2-user@infected.example.com
 ```
 
 

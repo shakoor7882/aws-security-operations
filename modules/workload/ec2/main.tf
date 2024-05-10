@@ -23,6 +23,7 @@ resource "aws_instance" "main" {
 
   iam_instance_profile = aws_iam_instance_profile.main.id
   user_data            = file("${path.module}/userdata/${var.user_data}")
+  key_name             = aws_key_pair.deployer.key_name
 
   metadata_options {
     http_endpoint = "enabled"
@@ -97,14 +98,14 @@ data "aws_vpc" "selected" {
   id = var.vpc_id
 }
 
-resource "aws_security_group_rule" "ingress_ssh" {
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
-  security_group_id = aws_security_group.main.id
-}
+# resource "aws_security_group_rule" "ingress_ssh" {
+#   type              = "ingress"
+#   from_port         = 22
+#   to_port           = 22
+#   protocol          = "tcp"
+#   cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+#   security_group_id = aws_security_group.main.id
+# }
 
 resource "aws_security_group_rule" "egress_http" {
   type              = "egress"

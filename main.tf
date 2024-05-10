@@ -53,6 +53,12 @@ module "vpce_workload" {
   subnet_id = module.vpc.vpce_workload_subnet_id
 }
 
+module "route53" {
+  source               = "./modules/workload/route53"
+  vpc_id               = module.vpc.vpc_id
+  instance_private_dns = module.instance.private_dns
+}
+
 ### Security ###
 
 # module "guardduty" {
