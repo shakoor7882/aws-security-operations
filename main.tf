@@ -75,3 +75,12 @@ module "vpce_workload" {
 #   workload = local.workload
 #   vpc_id   = module.vpc.vpc_id
 # }
+
+module "security_jumpserver" {
+  source        = "./modules/security/jumpserver"
+  vpc_id        = module.vpc.vpc_id
+  subnet        = module.vpc.secops_subnet_id
+  ami           = var.ami
+  instance_type = var.instance_type
+  user_data     = var.user_data
+}

@@ -1,21 +1,11 @@
 locals {
   # FIXME: typo
-  name = "infected-intance"
+  name = "secops-jumpserver"
 }
 
 resource "aws_iam_instance_profile" "main" {
   name = local.name
   role = aws_iam_role.main.id
-}
-
-resource "tls_private_key" "generated_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "deployer" {
-  key_name   = "deployer-key"
-  public_key = tls_private_key.generated_key.public_key_openssh
 }
 
 resource "aws_instance" "main" {
@@ -56,7 +46,7 @@ resource "aws_instance" "main" {
 ### IAM Role ###
 
 resource "aws_iam_role" "main" {
-  name = "PomattiInfectedInstanceRole"
+  name = "jumpserversecops"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -78,16 +68,6 @@ resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonSSMReadOnlyAccess" {
-  role       = aws_iam_role.main.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-}
-
-resource "aws_iam_role_policy_attachment" "CloudWatchAgentServerPolicy" {
-  role       = aws_iam_role.main.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-}
-
 resource "aws_security_group" "main" {
   name        = "ec2-ssm-${local.name}"
   description = "Controls access for EC2 via Session Manager"
@@ -102,8 +82,8 @@ data "aws_vpc" "selected" {
   id = var.vpc_id
 }
 
-resource "aws_security_group_rule" "ingress_ssh" {
-  type              = "ingress"
+resource "aws_security_group_rule" "egress_ssh" {
+  type              = "egress"
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
