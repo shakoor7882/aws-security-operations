@@ -17,3 +17,8 @@ variable "instance_type" {
 variable "user_data" {
   type = string
 }
+
+variable "public_key_openssh" {
+  type      = string
+  sensitive = true
+}

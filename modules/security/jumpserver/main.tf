@@ -68,6 +68,11 @@ resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+resource "aws_iam_role_policy_attachment" "AmazonSSMReadOnlyAccess" {
+  role       = aws_iam_role.main.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+
 resource "aws_security_group" "main" {
   name        = "ec2-ssm-${local.name}"
   description = "Controls access for EC2 via Session Manager"

@@ -22,17 +22,25 @@ module "vpc" {
   workload = local.workload
 }
 
+resource "tls_private_key" "generated_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 module "ssm" {
-  source = "./modules/workload/ssm"
+  source              = "./modules/workload/ssm"
+  workload            = local.workload
+  private_key_openssh = tls_private_key.generated_key.private_key_openssh
 }
 
 module "instance" {
-  source        = "./modules/workload/ec2"
-  vpc_id        = module.vpc.vpc_id
-  subnet        = module.vpc.private_workload_subnet_id
-  ami           = var.ami
-  instance_type = var.instance_type
-  user_data     = var.user_data
+  source             = "./modules/workload/ec2"
+  vpc_id             = module.vpc.vpc_id
+  subnet             = module.vpc.private_workload_subnet_id
+  ami                = var.ami
+  instance_type      = var.instance_type
+  user_data          = var.user_data
+  public_key_openssh = tls_private_key.generated_key.public_key_openssh
 
   depends_on = [module.ssm, module.vpce_workload]
 }

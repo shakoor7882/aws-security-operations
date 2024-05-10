@@ -47,6 +47,14 @@ https://dev.to/aws-builders/aws-incident-response-how-to-contain-an-ec2-instance
 
 
 
+Getting the private key from Parameter Store:
+
+```sh
+aws ssm get-parameter \
+    --name "bigbank-private-key-openssh" \
+    --with-decryption
+```
+
 
 
 

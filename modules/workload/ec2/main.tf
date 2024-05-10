@@ -8,14 +8,9 @@ resource "aws_iam_instance_profile" "main" {
   role = aws_iam_role.main.id
 }
 
-resource "tls_private_key" "generated_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
-  public_key = tls_private_key.generated_key.public_key_openssh
+  public_key = var.public_key_openssh
 }
 
 resource "aws_instance" "main" {
