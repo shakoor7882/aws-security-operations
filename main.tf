@@ -92,3 +92,10 @@ module "security_jumpserver" {
   instance_type = var.instance_type
   user_data     = var.user_data
 }
+
+module "security_group_inspection" {
+  source                   = "./modules/security/securitygroup/inspection"
+  workload                 = local.workload
+  vpc_id                   = module.vpc.vpc_id
+  secops_subnet_cidr_block = module.vpc.secops_subnet_cidr_block
+}

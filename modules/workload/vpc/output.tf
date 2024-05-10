@@ -21,3 +21,7 @@ output "vpce_workload_subnet_id" {
 output "secops_subnet_id" {
   value = aws_subnet.secops.id
 }
+
+output "secops_subnet_cidr_block" {
+  value = aws_subnet.secops.cidr_block
+}
