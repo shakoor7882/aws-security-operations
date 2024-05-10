@@ -54,9 +54,10 @@ module "vpce_workload" {
 }
 
 module "route53" {
-  source               = "./modules/workload/route53"
-  vpc_id               = module.vpc.vpc_id
-  instance_private_dns = module.instance.private_dns
+  source                    = "./modules/workload/route53"
+  vpc_id                    = module.vpc.vpc_id
+  instance_private_dns      = module.instance.private_dns
+  security_jump_private_dns = module.security_jumpserver.private_dns
 }
 
 ### Security ###

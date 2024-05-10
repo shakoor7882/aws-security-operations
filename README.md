@@ -39,6 +39,7 @@ https://www.youtube.com/watch?v=fpShCxD8kFA
 https://github.com/awslabs/amazon-guardduty-tester
 
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tracking.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tracking.html
 
 
 Closing untracked connections:

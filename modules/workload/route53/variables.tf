@@ -5,3 +5,7 @@ variable "vpc_id" {
 variable "instance_private_dns" {
   type = string
 }
+
+variable "security_jump_private_dns" {
+  type = string
+}
