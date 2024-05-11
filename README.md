@@ -64,8 +64,25 @@ Connect to SSH:
 ssh -i ./rsa_private_key ec2-user@infected.example.com
 ```
 
+## Scenarios
+
+###
+
+1. Quarantine the instance using the [AWS-QuarantineEC2Instance][1] runbook.
+
+```sh
+
+```
+
 
 
 
 
 https://github.com/epomatti/aws-cloudwatch-subscriptions
+
+
+
+
+
+
+[1]: https://console.aws.amazon.com/systems-manager/automation/execute/AWS-QuarantineEC2Instance

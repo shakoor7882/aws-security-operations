@@ -1,7 +1,3 @@
-locals {
-  az = "${var.region}a"
-}
-
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   instance_tenancy     = "default"
@@ -45,7 +41,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "rt-${var.workload}-workload-pub"
+    Name = "rt-${var.workload}-pub"
   }
 }
 
@@ -58,7 +54,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "rt-${var.workload}-workload-pri"
+    Name = "rt-${var.workload}-pri"
   }
 }
 
@@ -66,65 +62,41 @@ resource "aws_route_table" "vpce" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "rt-${var.workload}-workload-vpce"
-  }
-}
-
-resource "aws_route_table" "secops" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
-  }
-
-  tags = {
-    Name = "rt-${var.workload}-secops"
+    Name = "rt-${var.workload}-vpce"
   }
 }
 
 ### Subnets ###
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.10.0/24"
-  availability_zone       = local.az
+  cidr_block              = "10.0.0.0/24"
+  availability_zone       = var.availability_zone
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "sub-${var.workload}-workload-pub"
+    Name = "sub-${var.workload}-pub"
   }
 }
 
 resource "aws_subnet" "private" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.50.0/24"
-  availability_zone       = local.az
+  cidr_block              = "10.0.10.0/24"
+  availability_zone       = var.availability_zone
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "sub-${var.workload}-workload-pri"
+    Name = "sub-${var.workload}-pri"
   }
 }
 
 resource "aws_subnet" "vpce" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.200.0/24"
-  availability_zone       = local.az
+  cidr_block              = "10.0.20.0/24"
+  availability_zone       = var.availability_zone
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "sub-${var.workload}-workload-vpce"
-  }
-}
-
-resource "aws_subnet" "secops" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.80.0/24"
-  availability_zone       = local.az
-  map_public_ip_on_launch = false
-
-  tags = {
-    Name = "sub-${var.workload}-secops"
+    Name = "sub-${var.workload}-vpce"
   }
 }
 
@@ -143,11 +115,6 @@ resource "aws_route_table_association" "vpce" {
   route_table_id = aws_route_table.vpce.id
 }
 
-resource "aws_route_table_association" "secops" {
-  subnet_id      = aws_subnet.secops.id
-  route_table_id = aws_route_table.secops.id
-}
-
 # Clear all default entries (CKV2_AWS_12)
 resource "aws_default_route_table" "internet" {
   default_route_table_id = aws_vpc.main.default_route_table_id
@@ -156,7 +123,3 @@ resource "aws_default_route_table" "internet" {
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.main.id
 }
-
-# resource "aws_default_network_acl" "default" {
-#   default_network_acl_id = aws_vpc.main.default_network_acl_id
-# }
