@@ -63,7 +63,7 @@ resource "aws_route" "public_subnet_to_gateway" {
 }
 
 resource "aws_route" "private_subnet_to_nat_gateway" {
-  route_table_id         = aws_route_table.public.id
+  route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.main.id
 }
