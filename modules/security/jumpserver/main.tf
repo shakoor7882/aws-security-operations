@@ -110,7 +110,7 @@ resource "aws_security_group_rule" "egress_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block, var.solution_vpc_cidr_block]
   security_group_id = aws_security_group.main.id
 }
 

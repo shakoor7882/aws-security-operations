@@ -21,3 +21,7 @@ variable "user_data" {
 variable "route53_zone_id" {
   type = string
 }
+
+variable "solution_vpc_cidr_block" {
+  type = string
+}
