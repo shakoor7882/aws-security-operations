@@ -26,7 +26,6 @@ dnf upgrade
 
 ```sh
 dig guarddutyc2activityb.com
-dig GuardDutyC2ActivityB.com any
 ```
 
 GuardDuty-initiated malware scan is enabled
@@ -45,6 +44,8 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tr
 Closing untracked connections:
 
 https://dev.to/aws-builders/aws-incident-response-how-to-contain-an-ec2-instance-pjk
+
+https://docs.aws.amazon.com/guardduty/latest/ug/findings-runtime-monitoring.html
 
 
 
@@ -66,7 +67,6 @@ Connect to SSH:
 
 ```sh
 ssh -i ./rsa_private_key ec2-user@infected.intranet.wms.com
-
 ```
 
 ## Scenarios
@@ -76,7 +76,7 @@ ssh -i ./rsa_private_key ec2-user@infected.intranet.wms.com
 1. Quarantine the instance using the [AWS-QuarantineEC2Instance][1] runbook.
 
 ```sh
-
+aws ec2 modify-instance-attribute --instance-id i-12345 --groups sg-12345 sg-67890
 ```
 
 The security group `isolated-security-group` has been pre-created by Terraform.

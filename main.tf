@@ -132,6 +132,11 @@ module "flowlogs_security" {
   vpc_id   = module.vpc_security.vpc_id
 }
 
+module "route53_dns_firewall" {
+  source          = "./modules/security/dns-firewall"
+  vpc_id          = module.vpc_solution.vpc_id
+  blocked_domains = var.route53_dns_firewall_blocked_domains
+}
 
 # module "guardduty" {
 #   source                    = "./modules/security/guardduty"

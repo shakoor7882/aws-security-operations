@@ -30,3 +30,8 @@ variable "user_data" {
 variable "sns_email" {
   type = string
 }
+
+### Route 53 DNS Firewall ###
+variable "route53_dns_firewall_blocked_domains" {
+  type = list(string)
+}
