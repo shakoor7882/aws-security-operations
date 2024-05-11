@@ -79,13 +79,22 @@ ssh -i ./rsa_private_key ec2-user@infected.intranet.wms.com
 
 ```
 
-
+The security group `isolated-security-group` has been pre-created by Terraform.
 
 
 
 https://github.com/epomatti/aws-cloudwatch-subscriptions
 
 
+---
+
+### Clean-up
+
+Delete snapshots.
+
+```sh
+terraform destroy -auto-approve
+```
 
 
 

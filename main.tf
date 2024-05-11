@@ -106,22 +106,26 @@ module "security_jumpserver" {
   solution_vpc_cidr_block = module.vpc_solution.cidr_block
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Security ###
+module "solution_isolated_security_group" {
+  source   = "./modules/solution/isolated-security-group"
+  workload = local.solution_workload
+  vpc_id   = module.vpc_solution.vpc_id
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # module "guardduty" {
 #   source                    = "./modules/security/guardduty"
