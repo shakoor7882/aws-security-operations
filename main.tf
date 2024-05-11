@@ -113,6 +113,13 @@ module "solution_isolated_security_group" {
   vpc_id   = module.vpc_solution.vpc_id
 }
 
+module "solution_forensics_security_group" {
+  source                  = "./modules/solution/forensics-security-group"
+  workload                = local.solution_workload
+  vpc_id                  = module.vpc_solution.vpc_id
+  security_vpc_cidr_block = module.vpc_security.cidr_block
+}
+
 module "flowlogs_solution" {
   source   = "./common/flowlogs"
   workload = local.solution_workload
