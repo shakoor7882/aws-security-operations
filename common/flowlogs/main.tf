@@ -13,7 +13,7 @@ resource "aws_flow_log" "main" {
   vpc_id          = var.vpc_id
 
   tags = {
-    Name = "${var.workload}-flowlog"
+    Name = "flowlog-${var.workload}"
   }
 
   depends_on = [aws_iam_role_policy.cloudwatch]

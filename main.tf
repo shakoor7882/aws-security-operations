@@ -113,18 +113,17 @@ module "solution_isolated_security_group" {
   vpc_id   = module.vpc_solution.vpc_id
 }
 
+module "flowlogs_solution" {
+  source   = "./common/flowlogs"
+  workload = local.solution_workload
+  vpc_id   = module.vpc_solution.vpc_id
+}
 
-
-
-
-
-
-
-
-
-
-
-
+module "flowlogs_security" {
+  source   = "./common/flowlogs"
+  workload = local.security_workload
+  vpc_id   = module.vpc_security.vpc_id
+}
 
 
 # module "guardduty" {
@@ -150,17 +149,6 @@ module "solution_isolated_security_group" {
 #   sns_topic_arn = module.sns.arn
 # }
 
-# module "flowlogs" {
-#   source   = "./modules/security/flowlogs"
-#   workload = local.workload
-#   vpc_id   = module.vpc.vpc_id
-# }
 
 
 
-# module "security_group_inspection" {
-#   source                   = "./modules/security/securitygroup/inspection"
-#   workload                 = var.workload
-#   vpc_id                   = module.vpc.vpc_id
-#   secops_subnet_cidr_block = module.vpc.secops_subnet_cidr_block
-# }
