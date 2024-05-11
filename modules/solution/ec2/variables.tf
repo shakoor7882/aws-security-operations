@@ -22,3 +22,7 @@ variable "public_key_openssh" {
   type      = string
   sensitive = true
 }
+
+variable "route53_zone_id" {
+  type = string
+}

@@ -17,3 +17,7 @@ variable "instance_type" {
 variable "user_data" {
   type = string
 }
+
+variable "route53_zone_id" {
+  type = string
+}

@@ -113,3 +113,11 @@ resource "aws_security_group_rule" "egress_https" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.main.id
 }
+
+resource "aws_route53_record" "a" {
+  zone_id = var.route53_zone_id
+  name    = "secops-jumpserver"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.main.private_ip]
+}

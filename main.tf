@@ -74,26 +74,46 @@ module "route53" {
 }
 
 ### Systems Manager ###
-# module "ssm" {
-#   source              = "./modules/solution/ssm"
-#   workload            = local.solution_workload
-#   private_key_openssh = tls_private_key.generated_key.private_key_openssh
-# }
-
+module "ssm" {
+  source              = "./modules/solution/ssm"
+  workload            = local.solution_workload
+  private_key_openssh = tls_private_key.generated_key.private_key_openssh
+}
 
 ### EC2 ###
+module "wms_application" {
+  source             = "./modules/solution/ec2"
+  vpc_id             = module.vpc_solution.vpc_id
+  subnet             = module.vpc_solution.private_subnet_id
+  ami                = var.ami
+  instance_type      = var.instance_type
+  user_data          = var.user_data
+  public_key_openssh = tls_private_key.generated_key.public_key_openssh
+  route53_zone_id    = module.route53.zone_id
 
-# module "instance" {
-#   source             = "./modules/workload/ec2"
-#   vpc_id             = module.vpc.vpc_id
-#   subnet             = module.vpc.private_workload_subnet_id
-#   ami                = var.ami
-#   instance_type      = var.instance_type
-#   user_data          = var.user_data
-#   public_key_openssh = tls_private_key.generated_key.public_key_openssh
+  depends_on = [module.ssm, module.vpce_solution]
+}
 
-#   depends_on = [module.ssm, module.vpce_workload]
-# }
+module "security_jumpserver" {
+  source          = "./modules/security/jumpserver"
+  vpc_id          = module.vpc_security.vpc_id
+  subnet          = module.vpc_security.private_subnet_id
+  ami             = var.ami
+  instance_type   = var.instance_type
+  user_data       = var.user_data
+  route53_zone_id = module.route53.zone_id
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -130,14 +150,7 @@ module "route53" {
 #   vpc_id   = module.vpc.vpc_id
 # }
 
-# module "security_jumpserver" {
-#   source        = "./modules/security/jumpserver"
-#   vpc_id        = module.vpc.vpc_id
-#   subnet        = module.vpc.secops_subnet_id
-#   ami           = var.ami
-#   instance_type = var.instance_type
-#   user_data     = var.user_data
-# }
+
 
 # module "security_group_inspection" {
 #   source                   = "./modules/security/securitygroup/inspection"
