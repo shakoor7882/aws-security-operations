@@ -58,10 +58,15 @@ aws ssm get-parameter \
     --output text > rsa_private_key
 ```
 
+```sh
+chmod 600 ~/.ssh/id_rsa
+```
+
 Connect to SSH:
 
 ```sh
 ssh -i ./rsa_private_key ec2-user@infected.intranet.wms.com
+
 ```
 
 ## Scenarios
