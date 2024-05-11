@@ -98,12 +98,30 @@ data "aws_vpc" "selected" {
   id = var.vpc_id
 }
 
-resource "aws_security_group_rule" "ssh" {
+resource "aws_security_group_rule" "icmp_egress" {
+  type              = "egress"
+  from_port         = -1
+  to_port           = -1
+  protocol          = "icmp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block, var.security_vpc_cidr_block]
+  security_group_id = aws_security_group.main.id
+}
+
+resource "aws_security_group_rule" "icmp_ingress" {
+  type              = "ingress"
+  from_port         = -1
+  to_port           = -1
+  protocol          = "icmp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block, var.security_vpc_cidr_block]
+  security_group_id = aws_security_group.main.id
+}
+
+resource "aws_security_group_rule" "ingress_ssh" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [var.security_vpc_cidr_block]
   security_group_id = aws_security_group.main.id
 }
 

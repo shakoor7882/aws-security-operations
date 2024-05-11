@@ -26,3 +26,7 @@ variable "public_key_openssh" {
 variable "route53_zone_id" {
   type = string
 }
+
+variable "security_vpc_cidr_block" {
+  type = string
+}
