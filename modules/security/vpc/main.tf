@@ -9,7 +9,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
 
   tags = {
-    Name = "vpc-${var.workload}-security"
+    Name = "vpc-${var.workload}"
   }
 }
 
@@ -17,7 +17,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "ig-${var.workload}-security"
+    Name = "ig-${var.workload}"
   }
 }
 

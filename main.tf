@@ -34,7 +34,7 @@ module "vpc_solution" {
 module "vpc_security" {
   source            = "./modules/security/vpc"
   region            = var.aws_region
-  workload          = local.solution_workload
+  workload          = local.security_workload
   availability_zone = local.availability_zone
 }
 
