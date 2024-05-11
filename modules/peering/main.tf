@@ -7,7 +7,7 @@ locals {
 # Requester's side of the connection.
 resource "aws_vpc_peering_connection" "peer" {
   vpc_id        = var.security_requester_vpc_id
-  peer_vpc_id   = var.workload_accepter_vpc_id
+  peer_vpc_id   = var.solution_accepter_vpc_id
   peer_owner_id = local.account_id
 
   # Auto-accept must be false for x-region, and must use accepter
@@ -46,14 +46,14 @@ resource "aws_vpc_peering_connection_options" "accepter" {
   }
 }
 
-resource "aws_route" "security_to_workload" {
+resource "aws_route" "security_to_solution" {
   route_table_id            = var.security_requester_route_table_id
-  destination_cidr_block    = var.workload_accepter_vpc_cidr_block
+  destination_cidr_block    = var.solution_accepter_vpc_cidr_block
   vpc_peering_connection_id = aws_vpc_peering_connection.peer.id
 }
 
-resource "aws_route" "workload_to_security" {
-  route_table_id            = var.workload_accepter_route_table_id
+resource "aws_route" "solution_to_security" {
+  route_table_id            = var.solution_accepter_route_table_id
   destination_cidr_block    = var.security_requester_vpc_cidr_block
   vpc_peering_connection_id = aws_vpc_peering_connection.peer.id
 }

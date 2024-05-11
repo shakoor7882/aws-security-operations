@@ -38,34 +38,50 @@ module "vpc_security" {
   availability_zone = local.availability_zone
 }
 
-# module "vpc_peering" {
-#   source                       = "./modules/vpc/peering"
-#   bastion_requester_vpc_id     = module.vpc_bastion.vpc_id
-#   solution_accepter_vpc_id     = module.vpc_solution.vpc_id
-#   solution_accepter_vpc_region = var.solution_region
+module "vpc_peering" {
+  source                    = "./modules/peering"
+  security_requester_vpc_id = module.vpc_security.vpc_id
+  solution_accepter_vpc_id  = module.vpc_solution.vpc_id
 
-#   bastion_requester_route_table_id = module.vpc_bastion.route_table_id
-#   bastion_requester_vpc_cidr_block = module.vpc_bastion.cidr_block
+  security_requester_route_table_id = module.vpc_security.private_route_table_id
+  security_requester_vpc_cidr_block = module.vpc_security.cidr_block
 
-#   solution_accepter_route_table_id = module.vpc_solution.route_table_id
-#   solution_accepter_vpc_cidr_block = module.vpc_solution.cidr_block
-# }
+  solution_accepter_route_table_id = module.vpc_solution.private_route_table_id
+  solution_accepter_vpc_cidr_block = module.vpc_solution.cidr_block
+}
 
+module "vpce_solution" {
+  source    = "./common/vpce"
+  workload  = local.solution_workload
+  region    = var.aws_region
+  vpc_id    = module.vpc_solution.vpc_id
+  subnet_id = module.vpc_solution.vpce_subnet_id
+}
 
+module "vpce_security" {
+  source    = "./common/vpce"
+  workload  = local.security_workload
+  region    = var.aws_region
+  vpc_id    = module.vpc_security.vpc_id
+  subnet_id = module.vpc_security.vpce_subnet_id
+}
 
-# module "vpce_solution" {
-#   source    = "./common/vpce"
-#   workload  = local.solution_workload
-#   region    = var.aws_region
-#   vpc_id    = module.vpc_solution.vpc_id
-#   subnet_id = module.vpc_solution.vpce_solution_subnet_id
-# }
+### Route 53 ###
+module "route53" {
+  source          = "./modules/route53"
+  solution_vpc_id = module.vpc_solution.vpc_id
+  security_vpc_id = module.vpc_security.vpc_id
+}
 
+### Systems Manager ###
 # module "ssm" {
-#   source              = "./modules/workload/ssm"
-#   workload            = var.workload
+#   source              = "./modules/solution/ssm"
+#   workload            = local.solution_workload
 #   private_key_openssh = tls_private_key.generated_key.private_key_openssh
 # }
+
+
+### EC2 ###
 
 # module "instance" {
 #   source             = "./modules/workload/ec2"
@@ -81,12 +97,7 @@ module "vpc_security" {
 
 
 
-# module "route53" {
-#   source                    = "./modules/workload/route53"
-#   vpc_id                    = module.vpc.vpc_id
-#   instance_private_dns      = module.instance.private_dns
-#   security_jump_private_dns = module.security_jumpserver.private_dns
-# }
+
 
 ### Security ###
 
