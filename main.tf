@@ -38,17 +38,17 @@ module "vpc_security" {
   availability_zone = local.availability_zone
 }
 
-module "vpc_peering" {
-  source                    = "./modules/peering"
-  security_requester_vpc_id = module.vpc_security.vpc_id
-  solution_accepter_vpc_id  = module.vpc_solution.vpc_id
+# module "vpc_peering" {
+#   source                    = "./modules/peering"
+#   security_requester_vpc_id = module.vpc_security.vpc_id
+#   solution_accepter_vpc_id  = module.vpc_solution.vpc_id
 
-  security_requester_route_table_id = module.vpc_security.private_route_table_id
-  security_requester_vpc_cidr_block = module.vpc_security.cidr_block
+#   security_requester_route_table_id = module.vpc_security.private_route_table_id
+#   security_requester_vpc_cidr_block = module.vpc_security.cidr_block
 
-  solution_accepter_route_table_id = module.vpc_solution.private_route_table_id
-  solution_accepter_vpc_cidr_block = module.vpc_solution.cidr_block
-}
+#   solution_accepter_route_table_id = module.vpc_solution.private_route_table_id
+#   solution_accepter_vpc_cidr_block = module.vpc_solution.cidr_block
+# }
 
 module "vpce_solution" {
   source    = "./common/vpce"
