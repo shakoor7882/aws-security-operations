@@ -8,10 +8,10 @@ Roadmap:
 - [x] Security infrastructure
 - [x] GuardDuty Runtime Monitoring
 - [x] Route 53 DNS Firewall
-- [] ASG
-- [] Inspector
-- [] Security Lake
-- [] Detective
+- [ ] ASG
+- [ ] Inspector
+- [ ] Security Lake
+- [ ] Detective
 
 <img src=".assets/aws-secops.png" />
 
