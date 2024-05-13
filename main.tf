@@ -66,6 +66,14 @@ module "vpce_security" {
   subnet_id = module.vpc_security.vpce_subnet_id
 }
 
+### S3 ###
+module "s3_vpce" {
+  source          = "./modules/solution/s3/vpce"
+  vpc_id          = module.vpc_solution.vpc_id
+  region          = var.aws_region
+  route_table_ids = [module.vpc_solution.private_route_table_id]
+}
+
 ### Route 53 ###
 module "route53" {
   source          = "./modules/route53"
