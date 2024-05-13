@@ -4,7 +4,7 @@ Simulation of detection, containment, and remediation techniques in AWS as part 
 
 <img src=".assets/aws-secops.png" />
 
-## Roadmap
+## 🚀 Roadmap
 
 Stuff that I need to do:
 
@@ -13,11 +13,12 @@ Stuff that I need to do:
 - [x] GuardDuty Runtime Monitoring
 - [x] Route 53 DNS Firewall
 - [x] Auto Scaling Group
+- [ ] Macie
 - [ ] Inspector
-- [ ] Security Lake
 - [ ] Detective
+- [ ] Security Lake
 
-## Setup
+## 🏗️ Setup
 
 Set up the `.auto.tfvars` file:
 
@@ -26,6 +27,8 @@ cp config/template.tfvars .auto.tfvars
 ```
 
 At a minimum, set the `sns_email` variable to your test email. This will be used for a GuardDuty subscription and will require an approval after creation.
+
+The default `workload_type` is set to `ASG`, which will deploy the application workload in an Auto Scaling Group.
 
 Create the infrastructure:
 
@@ -57,7 +60,7 @@ dnf upgrade
 
 ## Scenario 1: GuardDuty Runtime Monitoring
 
-### Detection
+### 🚨 Detection
 
 Connect to the application instance and test a [GuardDuty Runtime Monitoring][3] finding. Example:
 
@@ -69,25 +72,26 @@ This will force a [Backdoor:Runtime/C&CActivity.B!DNS][2] finding to be triggere
 
 In this simple example, the event will be captured in EventBridge and sent to an SNS topic. In a production use case, additional integration options may be implemented, not only notification, but also with a SOAR.
 
-### Containment
+### 🛡️ Containment
 
 Upon detecting the threat, a security operations team may choose to quarantine the instance to protected the data.
 
 In this exemple, run the [AWS-QuarantineEC2Instance][1] runbook. The security group `isolated-security-group` has been pre-created by Terraform to be in scope of the `destroy` stage.
 
-If the instance would be running any processes in production, this would disable that process.
+> [!TIP]
+> The instance should be kept running in quarantine as to provide a better inspection scenario.
 
-A robust containment plan would include a remediation action that does minimal impact to production. One option in this case would be having a pre-baked AMI which could then be used to create a new server (assuming the AMI is not infected). This would likely require an integrated DevSecOps approach with the application and infrastructure teams, which is complex in planning and execution. When implementing Infrastructure as Code, the design should also consider such scenarios.
+Quarantining the instance directly can affect the service availability. Increasing the Auto Scaling Group size an allow additional instances to start would help mitigate such scenarios.
 
-The instance should be kept running in quarantine as to provide a better inspection scenario.
+> [!IMPORTANT]
+> A robust containment plan would include a remediation action that does minimal impact to production. One option in this case would be having a pre-baked AMI which could then be used to create a new server (assuming the AMI is not infected as well). A design based on Auto Scaling Groups is a good approach. If using standalone instances, this would likely require an integrated DevSecOps approach with the application and infrastructure teams, which is complex in planning and execution. When implementing Infrastructure as Code, the design should also consider such scenarios.
 
-### Inspection
 
-An engineer would now be able to inspect the infected instance.
+### 🕵️ Inspection
 
-Log in to the security jump server, which is in a peered VPC.
+An engineer would now be able to inspect the infected instance by logging into the security jump server, which is in a peered VPC.
 
-Get the application instance private key from Parameter Store:
+Connectivity could be done via SSH, for example, by copying the application instance private key from Parameter Store:
 
 ```sh
 aws ssm get-parameter \

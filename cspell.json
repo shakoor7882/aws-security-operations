@@ -4,7 +4,8 @@
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [
-        "runbook"
+        "runbook",
+        "secops"
     ],
     "ignoreWords": [],
     "import": []
