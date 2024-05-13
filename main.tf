@@ -189,7 +189,3 @@ module "eventbridge" {
   source        = "./modules/security/eventbridge"
   sns_topic_arn = module.sns.arn
 }
-
-
-
-
