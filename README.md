@@ -2,7 +2,11 @@
 
 Simulation of detection, containment, and remediation techniques in AWS as part of a SOC approach.
 
-Roadmap:
+<img src=".assets/aws-secops.png" />
+
+## Roadmap
+
+Stuff that I need to do:
 
 - [x] Application infrastructure
 - [x] Security infrastructure
@@ -12,8 +16,6 @@ Roadmap:
 - [ ] Inspector
 - [ ] Security Lake
 - [ ] Detective
-
-<img src=".assets/aws-secops.png" />
 
 ## Setup
 
