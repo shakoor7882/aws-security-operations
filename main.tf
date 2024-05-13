@@ -74,6 +74,16 @@ module "s3_vpce" {
   route_table_ids = [module.vpc_solution.private_route_table_id]
 }
 
+module "s3_application" {
+  source   = "./modules/solution/s3/bucket-application"
+  workload = local.solution_workload
+}
+
+module "s3_attacker" {
+  source   = "./modules/solution/s3/bucket-attacker"
+  workload = "attacker"
+}
+
 ### Route 53 ###
 module "route53" {
   source          = "./modules/route53"
