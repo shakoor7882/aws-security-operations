@@ -174,28 +174,21 @@ module "route53_dns_firewall" {
   blocked_domains = var.route53_dns_firewall_blocked_domains
 }
 
-# module "guardduty" {
-#   source                    = "./modules/security/guardduty"
-#   enable_guardduty          = var.enable_guardduty
-#   enable_runtime_monitoring = var.enable_guardduty_runtime_monitoring
-# }
+module "guardduty" {
+  source                    = "./modules/security/guardduty"
+  enable_guardduty          = var.enable_guardduty
+  enable_runtime_monitoring = var.enable_guardduty_runtime_monitoring
+}
 
-# module "vpce_security" {
-#   source    = "./modules/security/vpce"
-#   region    = var.aws_region
-#   vpc_id    = module.vpc.vpc_id
-#   subnet_id = module.vpc.vpce_workload_subnet_id
-# }
+module "sns" {
+  source = "./modules/security/sns"
+  email  = var.sns_email
+}
 
-# module "sns" {
-#   source = "./modules/security/sns"
-#   email  = var.sns_email
-# }
-
-# module "eventbridge" {
-#   source        = "./modules/security/eventbridge"
-#   sns_topic_arn = module.sns.arn
-# }
+module "eventbridge" {
+  source        = "./modules/security/eventbridge"
+  sns_topic_arn = module.sns.arn
+}
 
 
 
