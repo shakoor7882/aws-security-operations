@@ -60,7 +60,7 @@ dnf upgrade
 
 ## Scenario 1: GuardDuty Runtime Monitoring
 
-### 🚨 Detection
+### 🚨 1.1 Detection
 
 Connect to the application instance and test a [GuardDuty Runtime Monitoring][3] finding. Example:
 
@@ -72,7 +72,7 @@ This will force a [Backdoor:Runtime/C&CActivity.B!DNS][2] finding to be triggere
 
 In this simple example, the event will be captured in EventBridge and sent to an SNS topic. In a production use case, additional integration options may be implemented, not only notification, but also with a SOAR.
 
-### 🛡️ Containment
+### 🛡️ 1.2 Containment
 
 Upon detecting the threat, a security operations team may choose to quarantine the instance to protected the data.
 
@@ -87,7 +87,7 @@ Quarantining the instance directly can affect the service availability. Increasi
 > A robust containment plan would include a remediation action that does minimal impact to production. One option in this case would be having a pre-baked AMI which could then be used to create a new server (assuming the AMI is not infected as well). A design based on Auto Scaling Groups is a good approach. If using standalone instances, this would likely require an integrated DevSecOps approach with the application and infrastructure teams, which is complex in planning and execution. When implementing Infrastructure as Code, the design should also consider such scenarios.
 
 
-### 🕵️ Inspection
+### 🕵️ 1.3 Inspection
 
 An engineer would now be able to inspect the infected instance by logging into the security jump server, which is in a peered VPC.
 
