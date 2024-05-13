@@ -99,8 +99,26 @@ module "ssm" {
 }
 
 ### EC2 ###
-module "wms_application" {
+
+module "wms_application_instance" {
+  count                   = var.workload_type == "EC2" ? 1 : 0
   source                  = "./modules/solution/ec2"
+  vpc_id                  = module.vpc_solution.vpc_id
+  subnet                  = module.vpc_solution.private_subnet_id
+  ami                     = var.ami
+  instance_type           = var.instance_type
+  user_data               = var.user_data
+  public_key_openssh      = tls_private_key.generated_key.public_key_openssh
+  route53_zone_id         = module.route53.zone_id
+  security_vpc_cidr_block = module.vpc_security.cidr_block
+
+  depends_on = [module.ssm, module.vpce_solution]
+}
+
+module "wms_application_asg" {
+  count                   = var.workload_type == "ASG" ? 1 : 0
+  source                  = "./modules/solution/asg"
+  workload                = local.solution_workload
   vpc_id                  = module.vpc_solution.vpc_id
   subnet                  = module.vpc_solution.private_subnet_id
   ami                     = var.ami

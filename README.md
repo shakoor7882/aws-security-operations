@@ -12,7 +12,7 @@ Stuff that I need to do:
 - [x] Security infrastructure
 - [x] GuardDuty Runtime Monitoring
 - [x] Route 53 DNS Firewall
-- [ ] ASG
+- [x] Auto Scaling Group
 - [ ] Inspector
 - [ ] Security Lake
 - [ ] Detective

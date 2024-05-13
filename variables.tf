@@ -14,6 +14,11 @@ variable "enable_guardduty_runtime_monitoring" {
 }
 
 ### EC2 ###
+variable "workload_type" {
+  type        = string
+  description = "Defines if the workload is created with an ASG or an instance"
+}
+
 variable "ami" {
   type = string
 }
