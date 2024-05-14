@@ -13,6 +13,7 @@ Stuff that I need to do:
 - [x] GuardDuty Runtime Monitoring
 - [x] Route 53 DNS Firewall
 - [x] Auto Scaling Group
+- [ ] Fargate
 - [ ] Macie
 - [ ] Inspector
 - [ ] Detective

@@ -14,6 +14,10 @@ variable "enable_guardduty_runtime_monitoring" {
 }
 
 ### EC2 ###
+variable "enable_ec2" {
+  type = bool
+}
+
 variable "workload_type" {
   type        = string
   description = "Defines if the workload is created with an ASG or an instance"
@@ -29,6 +33,19 @@ variable "instance_type" {
 
 variable "user_data" {
   type = string
+}
+
+### Fargate ###
+variable "enable_fargate" {
+  type = bool
+}
+
+variable "ecs_task_cpu" {
+  type = number
+}
+
+variable "ecs_task_memory" {
+  type = number
 }
 
 ### SNS ###
