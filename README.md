@@ -17,6 +17,7 @@ Stuff that I need to do:
 - [ ] Inspector
 - [ ] Detective
 - [ ] Security Lake
+- [ ] Honeypot
 
 ## 🏗️ Setup
 
