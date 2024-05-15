@@ -15,7 +15,7 @@ variable "ecs_task_memory" {
 }
 
 variable "vpc_id" {
-  type = number
+  type = string
 }
 
 variable "elb_subnet_ids" {
@@ -24,4 +24,12 @@ variable "elb_subnet_ids" {
 
 variable "ecs_subnet_ids" {
   type = list(string)
+}
+
+variable "enable_fargate_service" {
+  type = bool
+}
+
+variable "vpce_subnet_id" {
+  type = string
 }

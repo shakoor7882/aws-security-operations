@@ -12,9 +12,17 @@ provider "aws" {
 }
 
 locals {
+  # Minimum of 2 availability zones are required by the ELB
+  availability_zone_1 = "${var.aws_region}a"
+  availability_zone_2 = "${var.aws_region}b"
+
   solution_workload = "wms"
   security_workload = "sec"
-  availability_zone = "${var.aws_region}a"
+  fargate_workload  = "fargate"
+
+  count_ec2_instance = var.workload_type == "EC2" && var.enable_ec2 == true ? 1 : 0
+  count_ec2_asg      = var.workload_type == "ASG" && var.enable_ec2 == true ? 1 : 0
+  count_fargate      = var.enable_fargate == true ? 1 : 0
 }
 
 ### General ###
@@ -25,17 +33,18 @@ resource "tls_private_key" "generated_key" {
 
 ### VPC ###
 module "vpc_solution" {
-  source            = "./modules/solution/vpc"
-  region            = var.aws_region
-  workload          = local.solution_workload
-  availability_zone = local.availability_zone
+  source              = "./modules/solutions/vpc"
+  region              = var.aws_region
+  workload            = local.solution_workload
+  availability_zone_1 = local.availability_zone_1
+  availability_zone_2 = local.availability_zone_2
 }
 
 module "vpc_security" {
   source            = "./modules/security/vpc"
   region            = var.aws_region
   workload          = local.security_workload
-  availability_zone = local.availability_zone
+  availability_zone = local.availability_zone_1
 }
 
 module "vpc_peering" {
@@ -68,19 +77,19 @@ module "vpce_security" {
 
 ### S3 ###
 module "s3_vpce" {
-  source          = "./modules/solution/s3/vpce"
+  source          = "./modules/solutions/s3/vpce"
   vpc_id          = module.vpc_solution.vpc_id
   region          = var.aws_region
   route_table_ids = [module.vpc_solution.private_route_table_id]
 }
 
 module "s3_application" {
-  source   = "./modules/solution/s3/bucket-application"
+  source   = "./modules/solutions/s3/bucket-application"
   workload = local.solution_workload
 }
 
 module "s3_attacker" {
-  source   = "./modules/solution/s3/bucket-attacker"
+  source   = "./modules/solutions/s3/bucket-attacker"
   workload = "attacker"
 }
 
@@ -93,7 +102,7 @@ module "route53" {
 
 ### Systems Manager ###
 module "ssm" {
-  source              = "./modules/solution/ssm"
+  source              = "./modules/solutions/ssm"
   workload            = local.solution_workload
   private_key_openssh = tls_private_key.generated_key.private_key_openssh
 }
@@ -101,8 +110,8 @@ module "ssm" {
 ### EC2 ###
 
 module "wms_application_instance" {
-  count                   = var.workload_type == "EC2" ? 1 : 0
-  source                  = "./modules/solution/ec2"
+  count                   = local.count_ec2_instance
+  source                  = "./modules/solutions/ec2/instance"
   vpc_id                  = module.vpc_solution.vpc_id
   subnet                  = module.vpc_solution.private_subnet_id
   ami                     = var.ami
@@ -116,8 +125,8 @@ module "wms_application_instance" {
 }
 
 module "wms_application_asg" {
-  count                   = var.workload_type == "ASG" ? 1 : 0
-  source                  = "./modules/solution/asg"
+  count                   = local.count_ec2_asg
+  source                  = "./modules/solutions/ec2/asg"
   workload                = local.solution_workload
   vpc_id                  = module.vpc_solution.vpc_id
   subnet                  = module.vpc_solution.private_subnet_id
@@ -143,49 +152,29 @@ module "security_jumpserver" {
 }
 
 ### Fargate ###
-module "elb" {
-  source   = "./modules/elb"
-  workload = local.workload
-  subnets  = module.vpc.elb_subnets
-  vpc_id   = module.vpc.vpc_id
-}
-
-module "iam" {
-  source   = "./modules/iam"
-  workload = local.workload
-}
-
-module "ecr" {
-  source   = "./modules/ecr"
-  workload = local.workload
-}
-
-module "ecs" {
-  source                      = "./modules/ecs"
-  workload                    = local.workload
-  subnets                     = module.vpc.application_subnets
-  vpc_id                      = module.vpc.vpc_id
-  aws_region                  = var.aws_region
-  ecr_repository_url          = module.ecr.repository_url
-  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  ecs_task_role_arn           = module.iam.ecs_task_role_arn
-  primary_redis_endpoint      = module.redis.primary_redis_endpoint
-  redis_port                  = module.redis.redis_port
-  redis_auth_token            = var.redis_auth_token
-  target_group_arn            = module.elb.target_group_arn
-  task_cpu                    = var.ecs_task_cpu
-  task_memory                 = var.ecs_task_memory
+module "fargate" {
+  count                  = local.count_fargate
+  source                 = "./modules/solutions/fargate"
+  workload               = local.fargate_workload
+  region                 = var.aws_region
+  enable_fargate_service = var.enable_fargate_service
+  vpc_id                 = module.vpc_solution.vpc_id
+  elb_subnet_ids         = module.vpc_solution.public_subnet_ids
+  ecs_subnet_ids         = [module.vpc_solution.private_subnet_id]
+  ecs_task_cpu           = var.ecs_task_cpu
+  ecs_task_memory        = var.ecs_task_memory
+  vpce_subnet_id         = module.vpc_solution.vpce_subnet_id
 }
 
 ### Security ###
 module "solution_isolated_security_group" {
-  source   = "./modules/solution/isolated-security-group"
+  source   = "./modules/solutions/isolated-security-group"
   workload = local.solution_workload
   vpc_id   = module.vpc_solution.vpc_id
 }
 
 module "solution_forensics_security_group" {
-  source                  = "./modules/solution/forensics-security-group"
+  source                  = "./modules/solutions/forensics-security-group"
   workload                = local.solution_workload
   vpc_id                  = module.vpc_solution.vpc_id
   security_vpc_cidr_block = module.vpc_security.cidr_block

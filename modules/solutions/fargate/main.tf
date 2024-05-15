@@ -1,7 +1,7 @@
 module "elb" {
   source   = "./elb"
   workload = var.workload
-  vpc_id   = module.vpc.vpc_id
+  vpc_id   = var.vpc_id
   subnets  = var.elb_subnet_ids
 }
 
@@ -13,6 +13,13 @@ module "iam" {
 module "ecr" {
   source   = "./ecr"
   workload = var.workload
+}
+
+module "vpce" {
+  source    = "./vpce"
+  vpc_id    = var.vpc_id
+  region    = var.region
+  subnet_id = var.vpce_subnet_id
 }
 
 module "ecs" {
@@ -27,4 +34,7 @@ module "ecs" {
   target_group_arn            = module.elb.target_group_arn
   task_cpu                    = var.ecs_task_cpu
   task_memory                 = var.ecs_task_memory
+  enable_service              = var.enable_fargate_service
+
+  depends_on = [module.vpce]
 }

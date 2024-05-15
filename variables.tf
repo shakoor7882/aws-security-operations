@@ -18,6 +18,10 @@ variable "enable_ec2" {
   type = bool
 }
 
+variable "enable_fargate_service" {
+  type = bool
+}
+
 variable "workload_type" {
   type        = string
   description = "Defines if the workload is created with an ASG or an instance"

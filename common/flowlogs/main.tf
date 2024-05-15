@@ -21,7 +21,7 @@ resource "aws_flow_log" "main" {
 
 resource "aws_cloudwatch_log_group" "default" {
   name              = "${var.workload}-flowlog"
-  retention_in_days = 7
+  retention_in_days = 1
   skip_destroy      = false
 }
 

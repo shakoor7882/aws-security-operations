@@ -13,7 +13,8 @@ Stuff that I need to do:
 - [x] GuardDuty Runtime Monitoring
 - [x] Route 53 DNS Firewall
 - [x] Auto Scaling Group
-- [ ] Fargate
+- [x] Fargate Cluster
+- [ ] WAF
 - [ ] Macie
 - [ ] Inspector
 - [ ] Detective
@@ -30,7 +31,17 @@ cp config/template.tfvars .auto.tfvars
 
 At a minimum, set the `sns_email` variable to your test email. This will be used for a GuardDuty subscription and will require an approval after creation.
 
+```terraform
+sns_email = "subscriber@example.com"
+```
+
 The default `workload_type` is set to `ASG`, which will deploy the application workload in an Auto Scaling Group.
+
+To start with an EC2 configuration, set this to true:
+
+```terraform
+enable_ec2 = true
+```
 
 Create the infrastructure:
 
@@ -60,7 +71,7 @@ dnf update
 dnf upgrade
 ```
 
-## Scenario 1: GuardDuty Runtime Monitoring
+## Scenario 1: GuardDuty Runtime Monitoring for EC2 instances
 
 ### 🚨 1.1 Detection
 
@@ -115,9 +126,54 @@ Connect to the infected instance via SSH:
 ssh -i ./rsa_private_key ec2-user@infected.intranet.wms.com
 ```
 
+## Scenario 2: GuardDuty Runtime Monitoring for ECS Fargate
+
+To test GuardDuty capabilities for containers, set the project to create the ECS Fargate cluster.
+
+> [!NOTE]
+> Check the GuardDuty Runtime Monitoring [requirements][5] for AWS Fargate.
+
+The architecture adds to the existing base VPC and workload resources:
+
+<img src=".assets/aws-secops-fargate.png" width=500 />
+
+Start by creating the cluster, ECR, and other resources:
+
+```terraform
+enable_fargate         = true
+enable_fargate_service = false
+```
+
+Apply the Terraform configuration.
+
+Once the ECR is created, push the test vulnerable image:
+
+```sh
+bash apps/vulnerapp/ecrPush.bash
+```
+
+Set the project to create the ECS Fargate service:
+
+```terraform
+enable_fargate         = true
+enable_fargate_service = true
+```
+
+Apply the Terraform configuration again. Confirm that the GuardDuty agent has been initiated as a sidecar for the task.
+
+> [!IMPORTANT]
+> Open the GuardDuty Runtime Monitoring console and confirm the coverage status, but also if the container instances are being covered. Check the [troubleshooting][4] guide for help in identifying any issues.
+
+Test a malicious call running in the test image:
+
+```sh
+curl http:// /guardduty/trigger
+```
+
+
 ---
 
-### Clean-up
+### 🧹 Clean-up
 
 Delete any snapshots created by quarantine automation.
 
@@ -140,3 +196,5 @@ https://github.com/epomatti/aws-cloudwatch-subscriptions
 [1]: https://console.aws.amazon.com/systems-manager/automation/execute/AWS-QuarantineEC2Instance
 [2]: https://docs.aws.amazon.com/guardduty/latest/ug/findings-runtime-monitoring.html#backdoor-runtime-ccactivitybdns
 [3]: https://docs.aws.amazon.com/guardduty/latest/ug/findings-runtime-monitoring.html
+[4]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-guard-duty-troubleshooting.html#verify-ecs-runtime-ec2-run
+[5]: https://docs.aws.amazon.com/guardduty/latest/ug/prereq-runtime-monitoring-ecs-support.html

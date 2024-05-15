@@ -13,9 +13,10 @@ instance_type = "t3.micro"
 user_data     = "al2023.sh"
 
 # Fargate
-enable_fargate  = false
-ecs_task_cpu    = 512
-ecs_task_memory = 1024
+enable_fargate         = false
+enable_fargate_service = false
+ecs_task_cpu           = 512
+ecs_task_memory        = 1024
 
 # SNS
 sns_email = ""

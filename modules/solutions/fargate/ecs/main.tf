@@ -4,6 +4,7 @@ locals {
 
 resource "aws_ecs_cluster" "main" {
   name = "cluster-${var.workload}"
+
   setting {
     name  = "containerInsights"
     value = "enabled"
@@ -29,9 +30,6 @@ resource "aws_ecs_task_definition" "main" {
     {
       "name" : "${local.app_name}",
       "image" : "${var.ecr_repository_url}:latest",
-      "environment" : [
-        { "name" : "PORT", "value" : "80" }
-      ],
       "healthCheck" : {
         "retries" : 3,
         "command" : [
@@ -65,12 +63,15 @@ resource "aws_ecs_task_definition" "main" {
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "ecs-${var.workload}"
   retention_in_days = 365
+  skip_destroy      = false
 }
 
 resource "aws_ecs_service" "main" {
+  count                              = var.enable_service ? 1 : 0
   name                               = "ecs-service-${var.workload}"
   cluster                            = aws_ecs_cluster.main.id
   task_definition                    = aws_ecs_task_definition.main.arn
+  platform_version                   = "LATEST"
   scheduling_strategy                = "REPLICA"
   desired_count                      = 1
   deployment_minimum_healthy_percent = 100
@@ -83,8 +84,8 @@ resource "aws_ecs_service" "main" {
   }
 
   network_configuration {
+    assign_public_ip = false
     subnets          = var.subnets
-    assign_public_ip = true
     security_groups  = [aws_security_group.all.id]
   }
 
@@ -115,13 +116,14 @@ resource "aws_security_group" "all" {
   }
 }
 
+# FIXME: Implement an exploit for this
 resource "aws_security_group_rule" "ingress_http" {
   description       = "Allows HTTP ingress from ELB"
   type              = "ingress"
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["10.0.0.0/16"]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.all.id
 }
 

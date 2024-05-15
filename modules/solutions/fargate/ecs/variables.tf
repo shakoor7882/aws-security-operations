@@ -37,3 +37,7 @@ variable "ecs_task_execution_role_arn" {
 variable "ecs_task_role_arn" {
   type = string
 }
+
+variable "enable_service" {
+  type = bool
+}
