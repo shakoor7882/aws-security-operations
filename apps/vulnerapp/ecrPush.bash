@@ -1,6 +1,11 @@
 #!/bin/bash
 
-docker pull ghcr.io/epomatti/stressbox
-docker tag ghcr.io/epomatti/stressbox "$account.dkr.ecr.$region.amazonaws.com/stressbox:latest"
+account=$(aws sts get-caller-identity --query "Account" --output text)
+region=us-east-2
+sourceImage=epomatti/vulnerapp:latest
+ecrImage=ecr-vulnerapp:latest
+
+docker pull $sourceImage
+docker tag $sourceImage "$account.dkr.ecr.$region.amazonaws.com/$ecrImage"
 aws ecr get-login-password --region $region | docker login --username AWS --password-stdin "$account.dkr.ecr.$region.amazonaws.com"
-docker push "$account.dkr.ecr.$region.amazonaws.com/stressbox:latest"
+docker push "$account.dkr.ecr.$region.amazonaws.com/$ecrImage"
