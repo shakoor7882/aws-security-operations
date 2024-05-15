@@ -164,6 +164,12 @@ Apply the Terraform configuration again. Confirm that the GuardDuty agent has be
 > [!IMPORTANT]
 > Open the GuardDuty Runtime Monitoring console and confirm the coverage status, but also if the container instances are being covered. Check the [coverage troubleshooting][6] guide for help in identifying any technical issues, and also [troubleshooting FAQs][4].
 
+As it is documented in the [coverage statistics considerations][7]:
+
+> If your Amazon ECS cluster contains only Fargate tasks, the count appears as **0/0**.
+
+<img src=".assets/aws-fargate-tasks-guardduty-coverage.png" width=700 />
+
 Test a malicious call running in the test image:
 
 ```sh
@@ -199,3 +205,4 @@ https://github.com/epomatti/aws-cloudwatch-subscriptions
 [4]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-guard-duty-troubleshooting.html#verify-ecs-runtime-ec2-run
 [5]: https://docs.aws.amazon.com/guardduty/latest/ug/prereq-runtime-monitoring-ecs-support.html
 [6]: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html
+[7]: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html#ecs-review-coverage-statistics-ecs-runtime-monitoring
