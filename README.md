@@ -162,12 +162,12 @@ enable_fargate_service = true
 Apply the Terraform configuration again. Confirm that the GuardDuty agent has been initiated as a sidecar for the task.
 
 > [!IMPORTANT]
-> Open the GuardDuty Runtime Monitoring console and confirm the coverage status, but also if the container instances are being covered. Check the [troubleshooting][4] guide for help in identifying any issues.
+> Open the GuardDuty Runtime Monitoring console and confirm the coverage status, but also if the container instances are being covered. Check the [coverage troubleshooting][6] guide for help in identifying any technical issues, and also [troubleshooting FAQs][4].
 
 Test a malicious call running in the test image:
 
 ```sh
-curl http:// /guardduty/trigger
+curl http://<elb-public-endpoint>/guardduty/trigger
 ```
 
 
@@ -198,3 +198,4 @@ https://github.com/epomatti/aws-cloudwatch-subscriptions
 [3]: https://docs.aws.amazon.com/guardduty/latest/ug/findings-runtime-monitoring.html
 [4]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-guard-duty-troubleshooting.html#verify-ecs-runtime-ec2-run
 [5]: https://docs.aws.amazon.com/guardduty/latest/ug/prereq-runtime-monitoring-ecs-support.html
+[6]: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html
