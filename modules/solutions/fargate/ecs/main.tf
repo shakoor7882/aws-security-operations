@@ -1,9 +1,17 @@
+# To prevent crashes in GuardDuty association when creating/destroying
+resource "random_string" "ecs" {
+  length    = 10
+  min_lower = 10
+  special   = false
+}
+
 locals {
   app_name = "app-${var.workload}"
+  affix    = random_string.ecs.result
 }
 
 resource "aws_ecs_cluster" "main" {
-  name = "cluster-${var.workload}"
+  name = "cluster-${var.workload}-${local.affix}"
 
   setting {
     name  = "containerInsights"
@@ -17,14 +25,14 @@ resource "aws_ecs_cluster_capacity_providers" "fargate" {
 }
 
 resource "aws_ecs_task_definition" "main" {
-  family             = "ecs-task-${var.workload}"
-  network_mode       = "awsvpc"
-  cpu                = var.task_cpu
-  memory             = var.task_memory
-  execution_role_arn = var.ecs_task_execution_role_arn
-  task_role_arn      = var.ecs_task_role_arn
-
+  family                   = "ecs-task-${var.workload}-${local.affix}"
   requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = var.task_cpu
+  memory                   = var.task_memory
+  execution_role_arn       = var.ecs_task_execution_role_arn
+  task_role_arn            = var.ecs_task_role_arn
+  skip_destroy             = false
 
   container_definitions = jsonencode([
     {
@@ -61,14 +69,14 @@ resource "aws_ecs_task_definition" "main" {
 }
 
 resource "aws_cloudwatch_log_group" "ecs" {
-  name              = "ecs-${var.workload}"
+  name              = "ecs-${var.workload}-${local.affix}"
   retention_in_days = 365
   skip_destroy      = false
 }
 
 resource "aws_ecs_service" "main" {
   count                              = var.enable_service ? 1 : 0
-  name                               = "ecs-service-${var.workload}"
+  name                               = "ecs-service-${var.workload}-${local.affix}"
   cluster                            = aws_ecs_cluster.main.id
   task_definition                    = aws_ecs_task_definition.main.arn
   platform_version                   = "LATEST"
@@ -107,7 +115,7 @@ data "aws_vpc" "selected" {
 }
 
 resource "aws_security_group" "all" {
-  name        = "fargate-${var.workload}"
+  name        = "fargate-${var.workload}-${local.affix}"
   description = "Allow TLS inbound traffic"
   vpc_id      = var.vpc_id
 
