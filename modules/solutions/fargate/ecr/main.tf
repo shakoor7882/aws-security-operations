@@ -4,7 +4,8 @@ resource "aws_ecr_repository" "main" {
   force_delete         = true
 }
 
-# resource "aws_ecr_pull_through_cache_rule" "example" {
-#   ecr_repository_prefix = "ecr-public"
-#   upstream_registry_url = "registry-1.docker.io"
-# }
+resource "aws_ecr_repository" "cryptominer" {
+  name                 = "ecr-cryptominer"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+}

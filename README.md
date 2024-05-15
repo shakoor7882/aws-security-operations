@@ -146,10 +146,14 @@ enable_fargate_service = false
 
 Apply the Terraform configuration.
 
-Once the ECR is created, push the test vulnerable image:
+Upload the test images:
 
 ```sh
-bash apps/vulnerapp/ecrPush.bash
+# Custom vulnerable app
+bash apps/vulnerapp/ecr-push.bash
+
+# Malware Crypto-miner container - https://artifacthub.io/packages/container/malware-cryptominer-container/malware-cryptominer-container
+bash apps/cryptominer/ecr-push.bash
 ```
 
 Set the project to create the ECS Fargate service:

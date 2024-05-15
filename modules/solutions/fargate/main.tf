@@ -23,18 +23,19 @@ module "vpce" {
 }
 
 module "ecs" {
-  source                      = "./ecs"
-  workload                    = var.workload
-  vpc_id                      = var.vpc_id
-  subnets                     = var.ecs_subnet_ids
-  region                      = var.region
-  ecr_repository_url          = module.ecr.repository_url
-  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  ecs_task_role_arn           = module.iam.ecs_task_role_arn
-  target_group_arn            = module.elb.target_group_arn
-  task_cpu                    = var.ecs_task_cpu
-  task_memory                 = var.ecs_task_memory
-  enable_service              = var.enable_fargate_service
+  source                         = "./ecs"
+  workload                       = var.workload
+  vpc_id                         = var.vpc_id
+  subnets                        = var.ecs_subnet_ids
+  region                         = var.region
+  ecr_vulnerapp_repository_url   = module.ecr.vulnerapp_repository_url
+  ecr_cryptominer_repository_url = module.ecr.cryptominer_repository_url
+  ecs_task_execution_role_arn    = module.iam.ecs_task_execution_role_arn
+  ecs_task_role_arn              = module.iam.ecs_task_role_arn
+  target_group_arn               = module.elb.target_group_arn
+  task_cpu                       = var.ecs_task_cpu
+  task_memory                    = var.ecs_task_memory
+  enable_service                 = var.enable_fargate_service
 
   depends_on = [module.vpce]
 }

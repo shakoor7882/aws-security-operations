@@ -26,7 +26,11 @@ variable "task_memory" {
   type = number
 }
 
-variable "ecr_repository_url" {
+variable "ecr_vulnerapp_repository_url" {
+  type = string
+}
+
+variable "ecr_cryptominer_repository_url" {
   type = string
 }
 
