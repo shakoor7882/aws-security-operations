@@ -168,7 +168,7 @@ As it is documented in the [coverage statistics considerations][7]:
 
 > If your Amazon ECS cluster contains only Fargate tasks, the count appears as **0/0**.
 
-<img src=".assets/aws-fargate-tasks-guardduty-coverage.png" width=700 />
+<img src=".assets/aws-fargate-tasks-guardduty-coverage.png" />
 
 Test a malicious call running in the test image:
 
