@@ -20,6 +20,7 @@ Stuff that I need to do:
 - [ ] Detective
 - [ ] Security Lake
 - [ ] Honeypot
+- [ ] S3 data exfiltration
 
 ## 🏗️ Setup
 

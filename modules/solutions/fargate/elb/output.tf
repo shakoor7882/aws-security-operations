@@ -5,3 +5,7 @@ output "dns_name" {
 output "target_group_arn" {
   value = aws_lb_target_group.fargate.arn
 }
+
+output "cryptminer_target_group_arn" {
+  value = aws_lb_target_group.cryptominer.arn
+}

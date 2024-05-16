@@ -33,6 +33,7 @@ module "ecs" {
   ecs_task_execution_role_arn    = module.iam.ecs_task_execution_role_arn
   ecs_task_role_arn              = module.iam.ecs_task_role_arn
   target_group_arn               = module.elb.target_group_arn
+  cryptominer_target_group_arn   = module.elb.cryptminer_target_group_arn
   task_cpu                       = var.ecs_task_cpu
   task_memory                    = var.ecs_task_memory
   enable_service                 = var.enable_fargate_service

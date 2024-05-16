@@ -18,6 +18,10 @@ variable "target_group_arn" {
   type = string
 }
 
+variable "cryptominer_target_group_arn" {
+  type = string
+}
+
 variable "task_cpu" {
   type = number
 }

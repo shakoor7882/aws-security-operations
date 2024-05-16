@@ -1,18 +1,21 @@
-# To prevent crashes in GuardDuty association when creating/destroying
 resource "random_string" "ecs" {
+  # To prevent crashes in GuardDuty association when creating/destroying
   length    = 10
   min_lower = 10
   special   = false
 }
 
 locals {
-  app_name             = "app-${var.workload}"
-  app_cryptominer_name = "app-cryptominer${var.workload}"
+  vulnernapp_app_name  = "vulnerapp"
+  cryptominer_app_name = "cryptominer"
   affix                = random_string.ecs.result
+
+  vulnerapp_port   = 80
+  cryptominer_port = 8080
 }
 
 resource "aws_ecs_cluster" "main" {
-  name = "cluster-${var.workload}-${local.affix}"
+  name = "infected-cluster-${var.workload}-${local.affix}"
 
   setting {
     name  = "containerInsights"
@@ -25,20 +28,20 @@ resource "aws_ecs_cluster_capacity_providers" "fargate" {
   capacity_providers = ["FARGATE"]
 }
 
-resource "aws_cloudwatch_log_group" "ecs" {
-  name              = "ecs-${var.workload}-${local.affix}"
-  retention_in_days = 365
+resource "aws_cloudwatch_log_group" "vulnerapp" {
+  name              = "ecs-${local.vulnernapp_app_name}-${var.workload}-${local.affix}"
+  retention_in_days = 1
   skip_destroy      = false
 }
 
 resource "aws_cloudwatch_log_group" "cryptominer" {
-  name              = "ecs-cryptominer-${var.workload}-${local.affix}"
-  retention_in_days = 365
+  name              = "ecs-${local.cryptominer_app_name}-${var.workload}-${local.affix}"
+  retention_in_days = 1
   skip_destroy      = false
 }
 
-resource "aws_ecs_task_definition" "main" {
-  family                   = "ecs-task-${var.workload}-${local.affix}"
+resource "aws_ecs_task_definition" "vulnerapp" {
+  family                   = "ecs-task-${local.vulnernapp_app_name}-${local.affix}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.task_cpu
@@ -49,7 +52,7 @@ resource "aws_ecs_task_definition" "main" {
 
   container_definitions = jsonencode([
     {
-      "name" : "${local.app_name}",
+      "name" : "${local.vulnernapp_app_name}",
       "image" : "${var.ecr_vulnerapp_repository_url}:latest",
       "healthCheck" : {
         "retries" : 3,
@@ -65,16 +68,16 @@ resource "aws_ecs_task_definition" "main" {
       "portMappings" : [
         {
           "protocol" : "tcp",
-          "containerPort" : 80,
-          "hostPort" : 80
+          "containerPort" : "${local.vulnerapp_port}",
+          "hostPort" : "${local.vulnerapp_port}"
         }
       ],
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-region" : "${var.region}",
-          "awslogs-group" : "${aws_cloudwatch_log_group.ecs.name}",
-          "awslogs-stream-prefix" : "${local.app_name}",
+          "awslogs-group" : "${aws_cloudwatch_log_group.vulnerapp.name}",
+          "awslogs-stream-prefix" : "${local.vulnernapp_app_name}",
         }
       }
     }
@@ -82,7 +85,7 @@ resource "aws_ecs_task_definition" "main" {
 }
 
 resource "aws_ecs_task_definition" "cryptominer" {
-  family                   = "ecs-task-cryptominer-${var.workload}-${local.affix}"
+  family                   = "ecs-task-${local.cryptominer_app_name}-${var.workload}-${local.affix}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.task_cpu
@@ -93,32 +96,37 @@ resource "aws_ecs_task_definition" "cryptominer" {
 
   container_definitions = jsonencode([
     {
-      "name" : "${local.app_cryptominer_name}",
+      "name" : "${local.cryptominer_app_name}",
       "image" : "${var.ecr_cryptominer_repository_url}:latest",
-      "healthCheck" : {
-        "retries" : 3,
-        "command" : [
-          "CMD-SHELL",
-          "curl -f http://localhost:8081/health || exit 1",
-        ],
-        "timeout" : 5,
-        "interval" : 10,
-        "startPeriod" : 10,
-      },
+      # "healthCheck" : {
+      #   "retries" : 3,
+      #   "command" : [
+      #     "CMD-SHELL",
+      #     "curl -f http://localhost:8081/ || exit 1",
+      #   ],
+      #   "timeout" : 5,
+      #   "interval" : 10,
+      #   "startPeriod" : 10,
+      # },
       "essential" : true,
-      # "portMappings" : [
-      #   {
-      #     "protocol" : "tcp",
-      #     "containerPort" : 80,
-      #     "hostPort" : 80
-      #   }
-      # ],
+      "portMappings" : [
+        {
+          "protocol" : "tcp",
+          "containerPort" : "${local.cryptominer_port}",
+          "hostPort" : "${local.cryptominer_port}"
+        },
+        {
+          "protocol" : "tcp",
+          "containerPort" : 8081,
+          "hostPort" : 8081
+        }
+      ],
       "logConfiguration" : {
         "logDriver" : "awslogs",
         "options" : {
           "awslogs-region" : "${var.region}",
           "awslogs-group" : "${aws_cloudwatch_log_group.cryptominer.name}",
-          "awslogs-stream-prefix" : "${local.app_cryptominer_name}",
+          "awslogs-stream-prefix" : "${local.cryptominer_app_name}",
         }
       }
     }
@@ -127,9 +135,9 @@ resource "aws_ecs_task_definition" "cryptominer" {
 
 resource "aws_ecs_service" "main" {
   count                              = var.enable_service ? 1 : 0
-  name                               = "ecs-service-${var.workload}-${local.affix}"
+  name                               = "${local.vulnernapp_app_name}-${local.affix}"
   cluster                            = aws_ecs_cluster.main.id
-  task_definition                    = aws_ecs_task_definition.main.arn
+  task_definition                    = aws_ecs_task_definition.vulnerapp.arn
   platform_version                   = "LATEST"
   scheduling_strategy                = "REPLICA"
   desired_count                      = 1
@@ -150,8 +158,8 @@ resource "aws_ecs_service" "main" {
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = local.app_name
-    container_port   = 80
+    container_name   = local.vulnernapp_app_name
+    container_port   = local.vulnerapp_port
   }
 
   lifecycle {
@@ -161,7 +169,7 @@ resource "aws_ecs_service" "main" {
 
 resource "aws_ecs_service" "cryptominer" {
   count                              = var.enable_service ? 1 : 0
-  name                               = "ecs-service-cryptominer-${var.workload}-${local.affix}"
+  name                               = "${local.cryptominer_app_name}-${local.affix}"
   cluster                            = aws_ecs_cluster.main.id
   task_definition                    = aws_ecs_task_definition.cryptominer.arn
   platform_version                   = "LATEST"
@@ -182,11 +190,11 @@ resource "aws_ecs_service" "cryptominer" {
     security_groups  = [aws_security_group.all.id]
   }
 
-  # load_balancer {
-  #   target_group_arn = var.target_group_arn
-  #   container_name   = local.app_name
-  #   container_port   = 80
-  # }
+  load_balancer {
+    target_group_arn = var.cryptominer_target_group_arn
+    container_name   = local.cryptominer_app_name
+    container_port   = local.cryptominer_port
+  }
 
   lifecycle {
     ignore_changes = [desired_count]
@@ -215,6 +223,26 @@ resource "aws_security_group_rule" "ingress_http" {
   type              = "ingress"
   from_port         = 80
   to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+  security_group_id = aws_security_group.all.id
+}
+
+resource "aws_security_group_rule" "ingress_http_8080" {
+  description       = "Allows HTTP ingress from ELB on port 8080"
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+  security_group_id = aws_security_group.all.id
+}
+
+resource "aws_security_group_rule" "ingress_http_8081" {
+  description       = "Allows HTTP ingress from ELB on port 8081"
+  type              = "ingress"
+  from_port         = 8081
+  to_port           = 8081
   protocol          = "tcp"
   cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.all.id

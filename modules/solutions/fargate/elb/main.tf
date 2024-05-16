@@ -17,7 +17,27 @@ resource "aws_lb_target_group" "fargate" {
 
   health_check {
     enabled             = true
+    port                = 80
     path                = "/health"
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 5
+    interval            = 10
+    matcher             = "200"
+  }
+}
+
+resource "aws_lb_target_group" "cryptominer" {
+  name        = "tg-lb-cryptominer-${var.workload}"
+  port        = 8080
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.vpc_id
+
+  health_check {
+    enabled             = true
+    port                = 8081
+    path                = "/"
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5
@@ -34,6 +54,17 @@ resource "aws_lb_listener" "http" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.fargate.arn
+  }
+}
+
+resource "aws_lb_listener" "cryptominer" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 8080
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.cryptominer.arn
   }
 }
 
@@ -61,11 +92,41 @@ resource "aws_security_group_rule" "inbound_http" {
   security_group_id = aws_security_group.lb.id
 }
 
+resource "aws_security_group_rule" "inbound_http_8080" {
+  description       = "Allows secure internet inbound traffic"
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.lb.id
+}
+
 resource "aws_security_group_rule" "outbound_ecs" {
   description       = "Allows traffic to ECS"
   type              = "egress"
   from_port         = 80
   to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+  security_group_id = aws_security_group.lb.id
+}
+
+resource "aws_security_group_rule" "outbound_ecs_8080" {
+  description       = "Allows traffic to ECS"
+  type              = "egress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+  security_group_id = aws_security_group.lb.id
+}
+
+resource "aws_security_group_rule" "outbound_ecs_8081" {
+  description       = "Allows traffic to ECS"
+  type              = "egress"
+  from_port         = 8081
+  to_port           = 8081
   protocol          = "tcp"
   cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.lb.id

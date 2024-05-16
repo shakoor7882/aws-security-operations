@@ -4,10 +4,13 @@
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [
+        "cryptominer",
+        "exfiltration",
         "fargate",
         "Fargate",
         "runbook",
-        "secops"
+        "secops",
+        "vulnerapp"
     ],
     "ignoreWords": [],
     "import": []
