@@ -181,6 +181,21 @@ Test a malicious call running in the test image:
 curl http://<elb-public-endpoint>/guardduty/trigger
 ```
 
+Another approach is to use a [honeypot container][8].
+
+## Other scenarios
+
+### Port scanning
+
+To trigger a finding based on VPC Flow Logs, run a port scanning from the infected instance:
+
+```sh
+nmap 10.0.10.x
+```
+
+### Common findings
+
+AWS offers a sample finding generator for [common GuardDuty findings][9].
 
 ---
 
@@ -202,6 +217,8 @@ https://github.com/awslabs/amazon-guardduty-tester
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-connection-tracking.html
 https://dev.to/aws-builders/aws-incident-response-how-to-contain-an-ec2-instance-pjk
 https://github.com/epomatti/aws-cloudwatch-subscriptions
+https://sysdig.com/blog/triaging-malicious-docker-container/
+https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_findings-scripts
 ```
 
 [1]: https://console.aws.amazon.com/systems-manager/automation/execute/AWS-QuarantineEC2Instance
@@ -211,3 +228,5 @@ https://github.com/epomatti/aws-cloudwatch-subscriptions
 [5]: https://docs.aws.amazon.com/guardduty/latest/ug/prereq-runtime-monitoring-ecs-support.html
 [6]: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html
 [7]: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html#ecs-review-coverage-statistics-ecs-runtime-monitoring
+[8]: https://sysdig.com/blog/triaging-malicious-docker-container/
+[9]: https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_findings-scripts

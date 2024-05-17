@@ -22,7 +22,7 @@ resource "aws_instance" "main" {
   vpc_security_group_ids      = [aws_security_group.main.id]
 
   iam_instance_profile = aws_iam_instance_profile.main.id
-  user_data            = file("${path.module}/userdata/${var.user_data}")
+  user_data            = file("${path.module}/userdata/al2023.sh")
   key_name             = aws_key_pair.deployer.key_name
 
   metadata_options {

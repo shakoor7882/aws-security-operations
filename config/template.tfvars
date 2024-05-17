@@ -10,7 +10,6 @@ enable_ec2    = false
 workload_type = "ASG" # ASG, INSTANCE
 ami           = "ami-09b90e09742640522"
 instance_type = "t3.micro"
-user_data     = "al2023.sh"
 
 # Fargate
 enable_fargate         = false

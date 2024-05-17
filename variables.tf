@@ -35,10 +35,6 @@ variable "instance_type" {
   type = string
 }
 
-variable "user_data" {
-  type = string
-}
-
 ### Fargate ###
 variable "enable_fargate" {
   type = bool

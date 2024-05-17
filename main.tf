@@ -20,7 +20,7 @@ locals {
   security_workload = "sec"
   fargate_workload  = "fargate"
 
-  count_ec2_instance = var.workload_type == "EC2" && var.enable_ec2 == true ? 1 : 0
+  count_ec2_instance = var.workload_type == "INSTANCE" && var.enable_ec2 == true ? 1 : 0
   count_ec2_asg      = var.workload_type == "ASG" && var.enable_ec2 == true ? 1 : 0
   count_fargate      = var.enable_fargate == true ? 1 : 0
 }
@@ -116,7 +116,6 @@ module "wms_application_instance" {
   subnet                  = module.vpc_solution.private_subnet_id
   ami                     = var.ami
   instance_type           = var.instance_type
-  user_data               = var.user_data
   public_key_openssh      = tls_private_key.generated_key.public_key_openssh
   route53_zone_id         = module.route53.zone_id
   security_vpc_cidr_block = module.vpc_security.cidr_block
@@ -132,7 +131,6 @@ module "wms_application_asg" {
   subnet                  = module.vpc_solution.private_subnet_id
   ami                     = var.ami
   instance_type           = var.instance_type
-  user_data               = var.user_data
   public_key_openssh      = tls_private_key.generated_key.public_key_openssh
   route53_zone_id         = module.route53.zone_id
   security_vpc_cidr_block = module.vpc_security.cidr_block
@@ -146,7 +144,6 @@ module "security_jumpserver" {
   subnet                  = module.vpc_security.private_subnet_id
   ami                     = var.ami
   instance_type           = var.instance_type
-  user_data               = var.user_data
   route53_zone_id         = module.route53.zone_id
   solution_vpc_cidr_block = module.vpc_solution.cidr_block
 }

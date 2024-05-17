@@ -18,10 +18,6 @@ variable "instance_type" {
   type = string
 }
 
-variable "user_data" {
-  type = string
-}
-
 variable "public_key_openssh" {
   type      = string
   sensitive = true
