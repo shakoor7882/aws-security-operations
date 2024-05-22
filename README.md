@@ -21,6 +21,7 @@ Stuff that I need to do:
 - [ ] Security Lake
 - [ ] Honeypot
 - [ ] S3 data exfiltration
+- [ ] Lateral movement
 
 ## 🏗️ Setup
 
