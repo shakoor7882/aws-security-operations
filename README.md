@@ -187,15 +187,18 @@ Another approach is to use a [honeypot container][8].
 
 ## Scenario 3: S3 data exfiltration
 
-The solution infrastructure will be provisioned with S3 Buckets and VPC Endpoints of type `Gateway` and `Interface`.
+The infrastructure for the application resources will be provisioned with S3 Buckets and VPC Endpoints (VPCE) of type `Gateway` and `Interface`.
 
-The DNS configuration is set using both `Enable DNS name` and `Enable private DNS only for inbound endpoints`, following guidelines from the [documentation][11].
+The VPCE DNS configuration is set using both `Enable DNS name` and `Enable private DNS only for inbound endpoints`, following guidelines from the [documentation][11].
 
-The application bucket is configured with a policy to accept only connections formt, allowing access only from the VPC Endpoint and 
+The application bucket is configured with a policy to accept connections only from the VPCE, and the VPCE accepts connections only to the specific S3 Buckets.
 
 > [!TIP]
-> Access to resources using VPC Endpoints must be declared explicitly, as it is explained in this [section][12] of the documentation.
-> `aws s3api delete-bucket-policy --bucket <bucket> --region <region> --endpoint-url https://bucket.<vpce-1a2b3c4d-5e6f>.s3.<region>.vpce.amazonaws.com`
+> Access to resources using VPC Endpoints must be declared explicitly, as it is explained in this [section][12] of the documentation. Example using the AWS CLI: `aws s3api delete-bucket-policy --bucket <bucket> --region <region> --endpoint-url https://bucket.<vpce-1a2b3c4d-5e6f>.s3.<region>.vpce.amazonaws.com`
+
+Detecting data exfiltration in such scenarios is challenging, giving that connectivity would go through the trusted VPCE Interface for the application bucket, but would be going through the VPCE Gateway fora malicious/attacker bucket.
+
+I'm looking to ways of further closing this type of scenario with this sandbox, and as well adding a firewall and IDPS/SIEM.
 
 ## Other scenarios
 
