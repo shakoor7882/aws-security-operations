@@ -14,13 +14,13 @@ Stuff that I need to do:
 - [x] Route 53 DNS Firewall
 - [x] Auto Scaling Group
 - [x] Fargate Cluster
+- [ ] S3 data exfiltration
 - [ ] WAF
 - [ ] Macie
 - [ ] Inspector
 - [ ] Detective
 - [ ] Security Lake
 - [ ] Honeypot
-- [ ] S3 data exfiltration
 - [ ] Lateral movement
 
 ## 🏗️ Setup
@@ -75,6 +75,8 @@ dnf upgrade
 
 ## Scenario 1: GuardDuty Runtime Monitoring for EC2 instances
 
+Guidelines for remediating potentially compromised Amazon EC2 instances can be found [here][10].
+
 ### 🚨 1.1 Detection
 
 Connect to the application instance and test a [GuardDuty Runtime Monitoring][3] finding. Example:
@@ -100,7 +102,6 @@ Quarantining the instance directly can affect the service availability. Increasi
 
 > [!IMPORTANT]
 > A robust containment plan would include a remediation action that does minimal impact to production. One option in this case would be having a pre-baked AMI which could then be used to create a new server (assuming the AMI is not infected as well). A design based on Auto Scaling Groups is a good approach. If using standalone instances, this would likely require an integrated DevSecOps approach with the application and infrastructure teams, which is complex in planning and execution. When implementing Infrastructure as Code, the design should also consider such scenarios.
-
 
 ### 🕵️ 1.3 Inspection
 
@@ -231,3 +232,4 @@ https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_f
 [7]: https://docs.aws.amazon.com/guardduty/latest/ug/gdu-assess-coverage-ecs.html#ecs-review-coverage-statistics-ecs-runtime-monitoring
 [8]: https://sysdig.com/blog/triaging-malicious-docker-container/
 [9]: https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_findings-scripts
+[10]: https://docs.aws.amazon.com/guardduty/latest/ug/compromised-ec2.html
