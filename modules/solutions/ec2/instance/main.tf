@@ -84,6 +84,11 @@ resource "aws_iam_role_policy_attachment" "CloudWatchAgentServerPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
+# resource "aws_iam_role_policy_attachment" "AmazonS3FullAccess" {
+#   role       = aws_iam_role.main.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+# }
+
 resource "aws_security_group" "main" {
   name        = "ec2-ssm-${local.name}"
   description = "Controls access for EC2 via Session Manager"

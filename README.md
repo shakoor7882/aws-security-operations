@@ -185,6 +185,18 @@ curl http://<elb-public-endpoint>/guardduty/trigger
 
 Another approach is to use a [honeypot container][8].
 
+## Scenario 3: S3 data exfiltration
+
+The solution infrastructure will be provisioned with S3 Buckets and VPC Endpoints of type `Gateway` and `Interface`.
+
+The DNS configuration is set using both `Enable DNS name` and `Enable private DNS only for inbound endpoints`, following guidelines from the [documentation][11].
+
+The application bucket is configured with a policy to accept only connections formt, allowing access only from the VPC Endpoint and 
+
+> [!TIP]
+> Access to resources using VPC Endpoints must be declared explicitly, as it is explained in this [section][12] of the documentation.
+> `aws s3api delete-bucket-policy --bucket <bucket> --region <region> --endpoint-url https://bucket.<vpce-1a2b3c4d-5e6f>.s3.<region>.vpce.amazonaws.com`
+
 ## Other scenarios
 
 ### Port scanning
@@ -233,3 +245,5 @@ https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_f
 [8]: https://sysdig.com/blog/triaging-malicious-docker-container/
 [9]: https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_findings-scripts
 [10]: https://docs.aws.amazon.com/guardduty/latest/ug/compromised-ec2.html
+[11]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html#private-dns
+[12]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html#accessing-bucket-and-aps-from-interface-endpoints

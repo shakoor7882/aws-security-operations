@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.48.0"
+      version = "5.51.0"
     }
   }
 }
@@ -76,8 +76,9 @@ module "vpce_security" {
 }
 
 ### S3 ###
-module "s3_vpce" {
-  source          = "./modules/solutions/s3/vpce"
+module "s3_vpce_gateway" {
+  source          = "./modules/solutions/s3/vpce-gateway"
+  workload        = local.solution_workload
   vpc_id          = module.vpc_solution.vpc_id
   region          = var.aws_region
   route_table_ids = [module.vpc_solution.private_route_table_id]
@@ -87,6 +88,23 @@ module "s3_application" {
   source   = "./modules/solutions/s3/bucket-application"
   workload = local.solution_workload
 }
+
+module "s3_vpce_interface" {
+  source    = "./modules/solutions/s3/vpce-interface"
+  workload  = local.solution_workload
+  region    = var.aws_region
+  vpc_id    = module.vpc_solution.vpc_id
+  subnet_id = module.vpc_solution.vpce_subnet_id
+  bucket    = module.s3_application.bucket
+}
+
+# FIXME: Don't lock yourself out of the bucket
+# module "s3_policy_application_vpce_interface" {
+#   source    = "./modules/solutions/s3/bucket-application-vpce-policy"
+#   bucket    = module.s3_application.bucket
+#   bucket_id = module.s3_application.bucket_id
+#   vpce_id   = module.s3_vpce_interface.vpce_id
+# }
 
 module "s3_attacker" {
   source   = "./modules/solutions/s3/bucket-attacker"
@@ -108,7 +126,6 @@ module "ssm" {
 }
 
 ### EC2 ###
-
 module "wms_application_instance" {
   count                   = local.count_ec2_instance
   source                  = "./modules/solutions/ec2/instance"
