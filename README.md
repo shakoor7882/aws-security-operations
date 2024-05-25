@@ -189,12 +189,22 @@ Another approach is to use a [honeypot container][8].
 
 To enable WAF, first deploy the ECS Fargate cluster. Once that is done, enable WAF in the configuration.
 
+> [!TIP]
+> Change the `waf_allowed_country_codes` and other parameters to the desired region.
+
 ```terraform
-enable_waf = true
+enable_waf                = true
+waf_allowed_country_codes = ["US"]
 ```
 
-Then `apply` the configuration again.
+`apply` the configuration again.
 
+To test the WAF rules:
+
+```sh
+cd test
+bash loop.sh lb-fargate-012345678.us-east-2.elb.amazonaws.com
+```
 
 ## Scenario 4: Bucket data exfiltration
 
