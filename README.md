@@ -185,7 +185,18 @@ curl http://<elb-public-endpoint>/guardduty/trigger
 
 Another approach is to use a [honeypot container][8].
 
-## Scenario 3: S3 data exfiltration
+## Scenario 3: WAF
+
+To enable WAF, first deploy the ECS Fargate cluster. Once that is done, enable WAF in the configuration.
+
+```terraform
+enable_waf = true
+```
+
+Then `apply` the configuration again.
+
+
+## Scenario 4: Bucket data exfiltration
 
 The infrastructure for the application resources will be provisioned with S3 Buckets and VPC Endpoints (VPCE) of type `Gateway` and `Interface`.
 

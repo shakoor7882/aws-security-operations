@@ -40,3 +40,13 @@ module "ecs" {
 
   depends_on = [module.vpce]
 }
+
+module "waf" {
+  count                      = var.enable_waf ? 1 : 0
+  source                     = "./waf"
+  workload                   = var.workload
+  resource_arn               = module.elb.elb_arn
+  allowed_country_codes      = var.waf_allowed_country_codes
+  rate_limit                 = var.waf_rate_limit
+  rate_evaluation_window_sec = var.waf_rate_evaluation_window_sec
+}

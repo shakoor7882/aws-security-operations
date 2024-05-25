@@ -17,6 +17,12 @@ enable_fargate_service = false
 ecs_task_cpu           = 512
 ecs_task_memory        = 1024
 
+# WAF
+enable_waf                     = false
+waf_allowed_country_codes      = ["BR"]
+waf_rate_limit                 = 100
+waf_rate_evaluation_window_sec = 60
+
 # SNS
 sns_email = ""
 

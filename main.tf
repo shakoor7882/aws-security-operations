@@ -178,6 +178,11 @@ module "fargate" {
   ecs_task_cpu           = var.ecs_task_cpu
   ecs_task_memory        = var.ecs_task_memory
   vpce_subnet_id         = module.vpc_solution.vpce_subnet_id
+
+  enable_waf                     = var.enable_waf
+  waf_allowed_country_codes      = var.waf_allowed_country_codes
+  waf_rate_limit                 = var.waf_rate_limit
+  waf_rate_evaluation_window_sec = var.waf_rate_evaluation_window_sec
 }
 
 ### Security ###

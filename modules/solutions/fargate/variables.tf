@@ -33,3 +33,19 @@ variable "enable_fargate_service" {
 variable "vpce_subnet_id" {
   type = string
 }
+
+variable "enable_waf" {
+  type = bool
+}
+
+variable "waf_allowed_country_codes" {
+  type = list(string)
+}
+
+variable "waf_rate_limit" {
+  type = number
+}
+
+variable "waf_rate_evaluation_window_sec" {
+  type = number
+}

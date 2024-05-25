@@ -48,6 +48,23 @@ variable "ecs_task_memory" {
   type = number
 }
 
+### WAF ###
+variable "enable_waf" {
+  type = bool
+}
+
+variable "waf_allowed_country_codes" {
+  type = list(string)
+}
+
+variable "waf_rate_limit" {
+  type = number
+}
+
+variable "waf_rate_evaluation_window_sec" {
+  type = number
+}
+
 ### SNS ###
 variable "sns_email" {
   type = string
