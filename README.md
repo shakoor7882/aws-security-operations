@@ -138,7 +138,7 @@ To test GuardDuty capabilities for containers, set the project to create the ECS
 
 The architecture adds to the existing base VPC and workload resources:
 
-<img src=".assets/aws-secops-fargate.png" width=500 />
+<img src=".assets/aws-secops-fargate-waf.png" />
 
 Start by creating the cluster, ECR, and other resources:
 
@@ -197,9 +197,9 @@ enable_waf                = true
 waf_allowed_country_codes = ["US"]
 ```
 
-`apply` the configuration again.
+Then, `apply` the configuration again to activate the changes.
 
-CloudWatch Logs [log anomaly detection][14] is currently [not supported][13] by the Terraform provider. Enable it manually.
+Logs and metrics are enabled, and managed rules have been associated with the WAF ACL. CloudWatch Logs [log anomaly detection][14] is currently [not supported][13] by the Terraform provider. Enable it manually.
 
 To test the WAF rules:
 
