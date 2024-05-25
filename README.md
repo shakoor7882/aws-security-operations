@@ -199,6 +199,8 @@ waf_allowed_country_codes = ["US"]
 
 `apply` the configuration again.
 
+CloudWatch Logs [log anomaly detection][14] is currently [not supported][13] by the Terraform provider. Enable it manually.
+
 To test the WAF rules:
 
 ```sh
@@ -271,3 +273,5 @@ https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html#guardduty_f
 [10]: https://docs.aws.amazon.com/guardduty/latest/ug/compromised-ec2.html
 [11]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html#private-dns
 [12]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html#accessing-bucket-and-aps-from-interface-endpoints
+[13]: https://github.com/hashicorp/terraform-provider-aws/issues/34788
+[14]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/LogsAnomalyDetection.html
