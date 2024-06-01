@@ -22,6 +22,7 @@ Stuff that I need to do:
 - [ ] Security Lake
 - [ ] Honeypot
 - [ ] Lateral movement
+- [ ] NAC
 
 ## 🏗️ Setup
 
