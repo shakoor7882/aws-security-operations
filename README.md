@@ -14,8 +14,8 @@ Stuff that I need to do:
 - [x] Route 53 DNS Firewall
 - [x] Auto Scaling Group
 - [x] Fargate Cluster
-- [ ] S3 data exfiltration
 - [ ] WAF
+- [ ] S3 data exfiltration
 - [ ] Macie
 - [ ] Inspector
 - [ ] Detective
